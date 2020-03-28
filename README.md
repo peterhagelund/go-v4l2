@@ -12,7 +12,7 @@ See `LICENSE.txt`
 
 ## Installing
 
-TODO
+Please note: Work in progress, quite incomplete still.
 
 ## Using
 
