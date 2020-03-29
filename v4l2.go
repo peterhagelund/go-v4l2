@@ -142,17 +142,17 @@ const (
 	// VidIocGFmt gets a specific format.
 	VidIocGFmt = 0xc0d05604
 	// VidIocSFmt sets a specific format.
-	VidIocSFmt      = 0xc0d05605
+	VidIocSFmt      = 0xc0cc5605
 	VidIocReqBufs   = 0xc0145608
-	VidIocQueryBuf  = 0xc0585609
+	VidIocQueryBuf  = 0xc0445609
 	VidIocGFBuf     = 0x8030560a
 	VidIocSFbuf     = 0x4030560b
 	VidIocOverlay   = 0x4004560e
-	VidIocQBuf      = 0xc058560f
+	VidIocQBuf      = 0xc044560f
 	VidIocExpBuf    = 0xc0405610
-	VidIocDQBUF     = 0xc0585611
-	VidIocSTREAMON  = 0x40045612
-	VidIocSTREAMOFF = 0x40045613
+	VidIocDQBuf     = 0xc0445611
+	VidIocStreamOn  = 0x40045612
+	VidIocStreamOff = 0x40045613
 	VidIocGParm     = 0xc0cc5615
 	VidIocSParm     = 0xc0cc5616
 	VidIocGStd      = 0x80085617
@@ -359,6 +359,7 @@ type FmtDesc struct {
 	Flags       uint32
 	Description [32]byte
 	PixFormat   uint32
+	Reserved    [4]uint32
 }
 
 // Format is an encapsulation of the various formats.
@@ -487,7 +488,7 @@ type Output struct {
 type PixFormat struct {
 	Width        uint32
 	Height       uint32
-	PixelFormat  uint32
+	PixFormat    uint32
 	Field        uint32
 	BytesPerLine uint32
 	SizeImage    uint32
@@ -503,7 +504,7 @@ type PixFormat struct {
 type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
-	PixelFormat  uint32
+	PixFormat    uint32
 	Field        uint32
 	ColorSpace   uint32
 	PlaneFmt     [8]PlanePixFormat
@@ -654,7 +655,7 @@ func BytesToString(b []byte) string {
 			break
 		}
 	}
-	return string(b[:n+1])
+	return string(b[:n])
 }
 
 // Ioctl performs a low-level ioctl operation.
@@ -663,5 +664,22 @@ func Ioctl(fd int, op uint32, arg uintptr) error {
 	if err == 0 {
 		return nil
 	}
+	return err
+}
+
+// SetFd sets the the bit for the fd in the fd set.
+func SetFd(fd int, s *syscall.FdSet) {
+	s.Bits[fd/64] |= 1 << (uint(fd) % 64)
+}
+
+// WaitFd waits for data to be ready for the specified fd.
+func WaitFd(fd int) error {
+	fdSet := &syscall.FdSet{}
+	SetFd(fd, fdSet)
+	timeout := &syscall.Timeval{
+		Sec:  2,
+		Usec: 0,
+	}
+	_, err := syscall.Select(fd+1, fdSet, nil, nil, timeout)
 	return err
 }
