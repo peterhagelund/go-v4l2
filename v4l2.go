@@ -657,29 +657,3 @@ func BytesToString(b []byte) string {
 	}
 	return string(b[:n])
 }
-
-// Ioctl performs a low-level ioctl operation.
-func Ioctl(fd int, op uint32, arg uintptr) error {
-	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(op), arg)
-	if err == 0 {
-		return nil
-	}
-	return err
-}
-
-// SetFd sets the the bit for the fd in the fd set.
-func SetFd(fd int, s *syscall.FdSet) {
-	s.Bits[fd/64] |= 1 << (uint(fd) % 64)
-}
-
-// WaitFd waits for data to be ready for the specified fd.
-func WaitFd(fd int) error {
-	fdSet := &syscall.FdSet{}
-	SetFd(fd, fdSet)
-	timeout := &syscall.Timeval{
-		Sec:  2,
-		Usec: 0,
-	}
-	_, err := syscall.Select(fd+1, fdSet, nil, nil, timeout)
-	return err
-}
