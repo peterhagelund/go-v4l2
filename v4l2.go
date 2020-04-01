@@ -22,6 +22,23 @@ package v4l2
 
 import "syscall"
 
+// AudCap is the audio capability type.
+type AudCap uint32
+
+// Audio capability flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#audio-capability).
+const (
+	AudCapStereo AudCap = 1 << iota
+	AudCapAVL
+)
+
+// AudMode is the audio mode type.
+type AudMode uint32
+
+// Audio mode flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#audio-mode).
+const (
+	AudModeAVL = 1 << iota
+)
+
 const (
 	BufCapSupportsMMap uint32 = 1 << iota
 	BufCapSupportsUserPtr
@@ -31,8 +48,41 @@ const (
 	BufCapSupportsM2MHoldCaptureBuf
 )
 
+// BufFlag is the buffer flag type.
+type BufFlag uint32
+
+// Buffer flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#buffer-flags).
 const (
-	BufTypeVideoCapture uint32 = iota + 1
+	BufFlagMapped BufFlag = 1 << iota
+	BufFlagQueued
+	BufFlagDone
+	BufFlagKeyFrame
+	BufFlagPFrame
+	BufFlagBFrame
+	BufFlagError
+	BufFlagInRequest
+	BufFlagTimecode
+	BufFlagM2MHoldCaptureBuf
+	BufFlagPrepared
+	BufFlagNoCacheInvalidate
+	BufFlagNoCacheClean
+	BufFlagTimestampMonotonic
+	BufFlagTimestampCopy
+	_
+	BufFlagTstampSOE
+	BufFlagTstampSrcEOF  BufFlag = 0x00000000
+	BufFlagTimestampMask BufFlag = 0x0000e000
+	BufFlagTstampSrcMask BufFlag = 0x00070000
+	BufFlagLast          BufFlag = 0x00100000
+	BufFlagRequestFD     BufFlag = 0x00800000
+)
+
+// BufType is the buffer type type.
+type BufType uint32
+
+// Buffer types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_buf_type).
+const (
+	BufTypeVideoCapture BufType = iota + 1
 	BufTypeVideoOutput
 	BufTypeVideoOverlay
 	BufTypeVBICapture
@@ -83,8 +133,12 @@ const (
 	CapDeviceCaps
 )
 
+// Field is the field type.
+type Field uint32
+
+// Field types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/field-order.html#c.v4l2_field).
 const (
-	FieldAny uint32 = iota
+	FieldAny Field = iota
 	FieldNone
 	FieldTop
 	FieldBottom
@@ -111,21 +165,36 @@ const (
 	InputTypeTouch
 )
 
+// Memory is the memory type.
+type Memory uint32
+
+// Memory types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_memory).
 const (
-	MemoryMMap uint32 = iota + 1
+	MemoryMMap Memory = iota + 1
 	MemoryUserPtr
 	MemoryOverlay
 	MemoryDMABuf
 )
 
+// TcFlag is the timecode flag type.
+type TcFlag uint32
+
+// Timecode flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#timecode-flags).
 const (
-	TcFlagUserDefined uint32 = 1 << iota
+	TcFlagUserDefined TcFlag = 1 << iota
 	TcFlagDropFrame
-	// UserBits ??? Flags or ...?
+	_
+	TcUserBits8BitChars
+	TcUserBitsField       TcFlag = 0x0000000C
+	TcUserBitsUserDefined TcFlag = 0x00000000
 )
 
+// TcType is the timecode type type.
+type TcType uint32
+
+// Timecode types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#timecode-type).
 const (
-	TcType24Fps uint32 = iota + 1
+	TcType24Fps TcType = iota + 1
 	TcType25Fps
 	TcType30Fps
 	TcType50Fps
@@ -264,27 +333,27 @@ const (
 // StdID is the standard ID type.
 type StdID uint64
 
-// Audio is an encapsulation of a set of audio attributes.
+// Audio is v4l2_audio (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#c.v4l2_audio).
 type Audio struct {
 	Index      uint32
 	Name       [32]byte
-	Capability uint32
-	Mode       uint32
+	Capability AudCap
+	Mode       AudMode
 	Reserved   [2]uint32
 }
 
-// Buffer is an encapsulation of a buffer.
+// Buffer is v4l2_buffer (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_buffer).
 type Buffer struct {
 	Index     uint32
-	Type      uint32
+	Type      BufType
 	BytesUsed uint32
-	Flags     uint32
-	Field     uint32
+	Flags     BufFlag
+	Field     Field
 	Timestamp syscall.Timeval
 	Timecode  Timecode
 	Sequence  uint32
-	Memory    uint32
-	M         uint32 // Union
+	Memory    Memory
+	M         uint32 // Union - Note: might differ between 32-bit and 64-bit systems. Investigate.
 	Length    uint32
 	Reserved2 uint32
 	RequestFD uint32
@@ -637,10 +706,10 @@ type RequestBuffers struct {
 	Reserved     [1]uint32
 }
 
-// Timecode is an encapsulation of a timecode.
+// Timecode is v4l2_timecode (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_timecode).
 type Timecode struct {
-	Type     uint32
-	Flags    uint32
+	Type     TcType
+	Flags    TcFlag
 	Frames   uint8
 	Seconds  uint8
 	Minutes  uint8
