@@ -133,75 +133,132 @@ const (
 )
 
 const (
-	// VidIocQueryCap queries the capabilities.
+	// VidIocQueryCap is VIDIOC_QUERYCAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html).
 	VidIocQueryCap uint32 = 0x80685600
-	// VidIocReserved is a reserved operation.
+	// VidIocReserved is VIDIOC_RESERVED.
 	VidIocReserved = 0x00005601
-	// VidIocEnumFmt enumerates formats.
+	// VidIocEnumFmt is (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html).
 	VidIocEnumFmt = 0xc0405602
-	// VidIocGFmt gets a specific format.
+	// VidIocGFmt is VIDIOC_G_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
 	VidIocGFmt = 0xc0d05604
-	// VidIocSFmt sets a specific format.
-	VidIocSFmt      = 0xc0cc5605
-	VidIocReqBufs   = 0xc0145608
-	VidIocQueryBuf  = 0xc0445609
-	VidIocGFBuf     = 0x8030560a
-	VidIocSFbuf     = 0x4030560b
-	VidIocOverlay   = 0x4004560e
-	VidIocQBuf      = 0xc044560f
-	VidIocExpBuf    = 0xc0405610
-	VidIocDQBuf     = 0xc0445611
-	VidIocStreamOn  = 0x40045612
+	// VidIocSFmt is VIDIOC_S_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
+	VidIocSFmt = 0xc0cc5605
+	// VidIocReqBufs is VIDIOC_REQBUFS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-reqbufs.html).
+	VidIocReqBufs = 0xc0145608
+	// VidIocQueryBuf is VIDIOC_QUERYBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querybuf.html).
+	VidIocQueryBuf = 0xc0445609
+	// VidIocGFBuf is VIDIOC_G_FBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fbuf.html).
+	VidIocGFBuf = 0x8030560a
+	// VidIocSFBuf is VIDIOC_S_FBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fbuf.html).
+	VidIocSFBuf = 0x4030560b
+	// VidIocOverlay is VIDIOC_OVERLAY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-overlay.html).
+	VidIocOverlay = 0x4004560e
+	// VidIocQBuf is VIDIOC_QBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-qbuf.html).
+	VidIocQBuf = 0xc044560f
+	// VidIocExpBuf is VIDIOC_EXPBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-expbuf.html).
+	VidIocExpBuf = 0xc0405610
+	// VidIocDQBuf is VIDIOC_DQBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-qbuf.html).
+	VidIocDQBuf = 0xc0445611
+	// VidIocStreamOn is VIDIOC_STREAMON (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-streamon.html).
+	VidIocStreamOn = 0x40045612
+	// VidIocStreamOff is VIDIOC_STREAMOFF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-streamon.html).
 	VidIocStreamOff = 0x40045613
-	VidIocGParm     = 0xc0cc5615
-	VidIocSParm     = 0xc0cc5616
-	VidIocGStd      = 0x80085617
-	VidIocSStd      = 0x40085618
-	VidIocEnumStd   = 0xc0485619
-	// VidIocEnumInput enumerates inputs.
-	VidIocEnumInput          = 0xc050561a
-	VidIocGCtrl              = 0xc008561b
-	VidIocSCtrl              = 0xc008561c
-	VidIocGTuner             = 0xc054561d
-	VidIocSTuner             = 0x4054561e
-	VidIocGAudio             = 0x80345621
-	VidIocSAudio             = 0x40345622
-	VidIocQueryCtrl          = 0xc0445624
-	VidIocQueryMenu          = 0xc02c5625
-	VidIocGInput             = 0x80045626
-	VidIocSInput             = 0xc0045627
-	VidIocGEDID              = 0xc0285628
-	VidIocSEDID              = 0xc0285629
-	VidIocGOutput            = 0x8004562e
-	VidIocSOutput            = 0xc004562f
-	VidIocEnumOutput         = 0xc0485630
-	VidIocGAudOut            = 0x80345631
-	VidIocSAudOut            = 0x40345632
-	VidIocGModulator         = 0xc0445636
-	VidIocSModulator         = 0x40445637
-	VidIocGFrequency         = 0xc02c5638
-	VidIocSFrequency         = 0x402c5639
-	VidIocCropCap            = 0xc02c563a
-	VidIocGCcrop             = 0xc014563b
-	VidIocSCcrop             = 0x4014563c
-	VidIocGJpegComp          = 0x808c563d
-	VidIocSJpegComp          = 0x408c563e
-	VidIocQueryStd           = 0x8008563f
-	VidIocTryFmt             = 0xc0d05640
-	VidIocEnumAudio          = 0xc0345641
-	VidIocEnumAudOut         = 0xc0345642
-	VidIocGPriority          = 0x80045643
-	VidIocSPriority          = 0x40045644
-	VidIocGSlicdeVBICap      = 0xc0745645
-	VidIocLogStatus          = 0x5646
-	VidIocGExtCtrls          = 0xc0205647
-	VidIocSExtCtrls          = 0xc0205648
-	VidIocTryExtCtrls        = 0xc0205649
-	VidIocEnumFrameSizes     = 0xc02c564a
+	// VidIocGParm is VIDIOC_G_PARM (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-parm.html).
+	VidIocGParm = 0xc0cc5615
+	// VidIocSParm is VIDIOC_S_PARM (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-parm.html).
+	VidIocSParm = 0xc0cc5616
+	// VidIocGStd is VIDIOC_G_STD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-std.html).
+	VidIocGStd = 0x80085617
+	// VidIocSStd is VIDIOC_S_STD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-std.html).
+	VidIocSStd = 0x40085618
+	// VidIocEnumStd is VIDIOC_ENUMSTD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumstd.html).
+	VidIocEnumStd = 0xc0485619
+	// VidIocEnumInput is VIDIOC_ENUMINPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html).
+	VidIocEnumInput = 0xc050561a
+	// VidIocGCtrl is VIDIOC_G_CTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ctrl.html).
+	VidIocGCtrl = 0xc008561b
+	// VidIocSCtrl is VIDIOC_S_CTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ctrl.html).
+	VidIocSCtrl = 0xc008561c
+	// VidIocGTuner is VIDIOC_G_TUNER (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html).
+	VidIocGTuner = 0xc054561d
+	// VidIocSTuner is VIDIOC_S_TUNER (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html).
+	VidIocSTuner = 0x4054561e
+	// VidIocGAudio is VIDIOC_G_AUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html).
+	VidIocGAudio = 0x80345621
+	// VidIocSAudio is VIDIOC_S_AUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html).
+	VidIocSAudio = 0x40345622
+	// VidIocQueryCtrl is VIDIOC_QUERYCTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-queryctrl.html).
+	VidIocQueryCtrl = 0xc0445624
+	// VidIocQueryMenu is VIDIOC_QUERYMENU (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-queryctrl.html)
+	VidIocQueryMenu = 0xc02c5625
+	// VidIocGInput is VIDIOC_G_INPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-input.html).
+	VidIocGInput = 0x80045626
+	// VidIocSInput is VIDIOC_S_INPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-input.html).
+	VidIocSInput = 0xc0045627
+	// VidIocGEDID is VIDIOC_G_EDID (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-edid.html).
+	VidIocGEDID = 0xc0285628
+	// VidIocSEDID is VIDIOC_S_EDID (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-edid.html).
+	VidIocSEDID = 0xc0285629
+	// VidIocGOutput is VIDIOC_G_OUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-output.html).
+	VidIocGOutput = 0x8004562e
+	// VidIocSOutput is VIDIOC_S_OUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-output.html).
+	VidIocSOutput = 0xc004562f
+	// VidIocEnumOutput is VIDIOC_ENUMOUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html).
+	VidIocEnumOutput = 0xc0485630
+	// VidIocGAudOut is VIDIOC_G_AUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audioout.html).
+	VidIocGAudOut = 0x80345631
+	// VidIocSAudOut is VIDIOC_S_AUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audioout.html).
+	VidIocSAudOut = 0x40345632
+	// VidIocGModulator is VIDIOC_G_MODULATOR (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html).
+	VidIocGModulator = 0xc0445636
+	// VidIocSModulator is VIDIOC_S_MODULATOR (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html).
+	VidIocSModulator = 0x40445637
+	// VidIocGFrequency is VIDIOC_G_FREQUENCY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-frequency.html).
+	VidIocGFrequency = 0xc02c5638
+	// VidIocSFrequency is VIDIOC_S_FREQUENCY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-frequency.html).
+	VidIocSFrequency = 0x402c5639
+	// VidIocCropCap is VIDIOC_CROPCAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-cropcap.html).
+	VidIocCropCap = 0xc02c563a
+	// VidIocGCrop is VIDIOC_G_CROP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-crop.html).
+	VidIocGCrop = 0xc014563b
+	// VidIocSCrop is VIDIOC_S_CROP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-crop.html).
+	VidIocSCrop = 0x4014563c
+	// VidIocGJpegComp is VIDIOC_G_JPEGCOMP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-jpegcomp.html).
+	VidIocGJpegComp = 0x808c563d
+	// VidIocSJpegComp is VIDIOC_S_JPEGCOMP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-jpegcomp.html).
+	VidIocSJpegComp = 0x408c563e
+	// VidIocQueryStd is VIDIOC_QUERYSTD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querystd.html).
+	VidIocQueryStd = 0x8008563f
+	// VidIocTryFmt is VIDIOC_TRY_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
+	VidIocTryFmt = 0xc0d05640
+	// VidIocEnumAudio is VIDIOC_ENUMAUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumaudio.html).
+	VidIocEnumAudio = 0xc0345641
+	// VidIocEnumAudOut is VIDIOC_ENUMAUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumaudioout.html).
+	VidIocEnumAudOut = 0xc0345642
+	// VidIocGPriority is VIDIOC_G_PRIORITY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-priority.html).
+	VidIocGPriority = 0x80045643
+	// VidIocSPriority is VIDIOC_S_PRIORITY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-priority.html).
+	VidIocSPriority = 0x40045644
+	// VidIocGSlicedVBICap is VIDIOC_G_SLICED_VBI_CAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-sliced-vbi-cap.html).
+	VidIocGSlicedVBICap = 0xc0745645
+	// VidIocLogStatus is VIDIOC_LOG_STATUS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-log-status.html).
+	VidIocLogStatus = 0x00005646
+	// VidIocGExtCtrls is VIDIOC_G_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	VidIocGExtCtrls = 0xc0205647
+	// VidIocSExtCtrls is VIDIOC_S_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	VidIocSExtCtrls = 0xc0205648
+	// VidIocTryExtCtrls is VIDIOC_TRY_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	VidIocTryExtCtrls = 0xc0205649
+	// VidIocEnumFrameSizes is VIDIOC_ENUM_FRAMESIZES (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html).
+	VidIocEnumFrameSizes = 0xc02c564a
+	// VidIocEnumFrameIntervals is VIDIOC_ENUM_FRAMEINTERVALS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-frameintervals.html).
 	VidIocEnumFrameIntervals = 0xc034564b
-	VidIocGEncIndex          = 0x8818564c
-	VidIocEncoderCmd         = 0xc028564d
-	VidIocTryEncoderCmd      = 0xc028564e
+	// VidIocGEncIndex is VIDIOC_G_ENC_INDEX (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-enc-index.html).
+	VidIocGEncIndex = 0x8818564c
+	// VidIocEncoderCmd is VIDIOC_ENCODER_CMD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-encoder-cmd.html).
+	VidIocEncoderCmd = 0xc028564d
+	// VidIocTryEncoderCmd is VIDIOC_TRY_ENCODER_CMD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-encoder-cmd.html).
+	VidIocTryEncoderCmd = 0xc028564e
 )
 
 // StdID is the standard ID type.
@@ -374,7 +431,7 @@ type FrameSizeDiscrete struct {
 	Height uint32
 }
 
-// FrameSizeEnum is an emcapsulation of frame size information.
+// FrameSizeEnum is an encapsulation of frame size information.
 type FrameSizeEnum struct {
 	Index     uint32
 	PixFormat uint32
