@@ -523,7 +523,7 @@ type FmtDesc struct {
 
 // Format is an encapsulation of the various formats.
 type Format struct {
-	Type    uint32
+	Type    BufType
 	RawData [256]byte
 }
 
@@ -648,7 +648,7 @@ type PixFormat struct {
 	Width        uint32
 	Height       uint32
 	PixFormat    PixFmt
-	Field        uint32
+	Field        Field
 	BytesPerLine uint32
 	SizeImage    uint32
 	ColorSpace   uint32
@@ -664,7 +664,7 @@ type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
 	PixFormat    PixFmt
-	Field        uint32
+	Field        Field
 	ColorSpace   uint32
 	PlaneFmt     [8]PlanePixFormat
 	NumPlanes    uint8
@@ -733,9 +733,9 @@ type QueryMenu struct {
 // RequestBuffers is an encapsulates a buffer request.
 type RequestBuffers struct {
 	Count        uint32
-	Type         uint32
-	Memory       uint32
-	Capabilities uint32
+	Type         BufType
+	Memory       Memory
+	Capabilities Cap
 	Reserved     [1]uint32
 }
 
