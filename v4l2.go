@@ -98,6 +98,10 @@ const (
 	BufTypeMetaOutput
 )
 
+// Cap is the device capability type.
+type Cap uint32
+
+// Device capability flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html#device-capabilities).
 const (
 	CapVideoCapture uint32 = 1 << iota
 	CapVideoOutput
@@ -150,6 +154,17 @@ const (
 	FieldInterlacedBT
 )
 
+// FmtFlag is the format flag type.
+type FmtFlag uint32
+
+// Format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html#fmtdesc-flags).
+const (
+	FmtFlagCompressed FmtFlag = 1 << iota
+	FmtFlagEmulated
+	FmtFlagContinuousByteStream
+	FmtFlagDynResolution
+)
+
 const (
 	FrmSizeTypeDiscrete uint32 = iota + 1
 	FrmSizeTypeContinuous
@@ -174,6 +189,24 @@ const (
 	MemoryUserPtr
 	MemoryOverlay
 	MemoryDMABuf
+)
+
+// PixFmt is the pixel format type.
+type PixFmt uint32
+
+// Pixel formats
+// (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-rgb.html#pixfmt-rgb
+// https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/yuv-formats.html#yuv-formats
+// https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-reserved.html#reserved-formats).
+const (
+	PixFmtRGB332 PixFmt = 'R'<<24 | 'G'<<16 | 'B'<<8 | '1'
+	// TODO
+
+	PixFmtGrey PixFmt = 'G'<<24 | 'R'<<16 | 'E'<<8 | 'Y'
+	// TODO
+
+	PxFmtDV PixFmt = 'd'<<24 | 'v'<<16 | 's'<<8 | 'd'
+	// TODO
 )
 
 // TcFlag is the timecode flag type.
@@ -359,14 +392,14 @@ type Buffer struct {
 	RequestFD uint32
 }
 
-// Capabilities is an encapsulation of device capabilities.
-type Capabilities struct {
+// Capability is v4l2_capability (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html#c.v4l2_capability).
+type Capability struct {
 	Driver       [16]byte
 	Card         [32]byte
 	BusInfo      [32]byte
 	Version      uint32
-	Capabilities uint32
-	DeviceCaps   uint32
+	Capabilities Cap
+	DeviceCaps   Cap
 	Reserved     [3]uint32
 }
 
@@ -478,13 +511,13 @@ type CtrlVP8FrameHeader struct {
 	Flags                 uint64
 }
 
-// FmtDesc is an encapsulation of a format descriptor.
+// FmtDesc is v4l2_fmtdesc (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html#c.v4l2_fmtdesc).
 type FmtDesc struct {
 	Index       uint32
-	Type        uint32
-	Flags       uint32
+	Type        BufType
+	Flags       FmtFlag
 	Description [32]byte
-	PixFormat   uint32
+	PixFormat   PixFmt
 	Reserved    [4]uint32
 }
 
@@ -503,7 +536,7 @@ type FrameSizeDiscrete struct {
 // FrameSizeEnum is an encapsulation of frame size information.
 type FrameSizeEnum struct {
 	Index     uint32
-	PixFormat uint32
+	PixFormat PixFmt
 	Type      uint32
 	Stepwise  FrameSizeStepwise // Union with FrameSizeDiscrete
 	Reserved  [2]uint32
@@ -614,7 +647,7 @@ type Output struct {
 type PixFormat struct {
 	Width        uint32
 	Height       uint32
-	PixFormat    uint32
+	PixFormat    PixFmt
 	Field        uint32
 	BytesPerLine uint32
 	SizeImage    uint32
@@ -630,7 +663,7 @@ type PixFormat struct {
 type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
-	PixFormat    uint32
+	PixFormat    PixFmt
 	Field        uint32
 	ColorSpace   uint32
 	PlaneFmt     [8]PlanePixFormat
