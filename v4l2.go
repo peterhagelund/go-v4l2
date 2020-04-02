@@ -39,6 +39,26 @@ const (
 	AudModeAVL = 1 << iota
 )
 
+// ColorSpace is the the color space type.
+type ColorSpace uint32
+
+// Color spaces (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_colorspace).
+const (
+	ColorSpaceDefault ColorSpace = iota // TODO Find actual values
+	ColorSpaceSMPTE170M
+	ColorSpaceRec709
+	ColorSpaceSRGB
+	ColorSpaceOPRGB
+	ColorSpaceBT2020
+	ColorSpaceDCIP3
+	ColorSpaceSMPTE240M
+	ColorSpace470SystemM
+	ColorSpace470SystemBG
+	ColorSpaceJPEG
+	ColorSpaceRaw
+)
+
+// Buffer capabilities (TODO).
 const (
 	BufCapSupportsMMap uint32 = 1 << iota
 	BufCapSupportsUserPtr
@@ -165,18 +185,65 @@ const (
 	FmtFlagDynResolution
 )
 
+// Frame size types (TODO).
 const (
 	FrmSizeTypeDiscrete uint32 = iota + 1
 	FrmSizeTypeContinuous
 	FrmSizeTypeStepwise
 )
 
+// InputCap is the input capabilities type.
+type InputCap uint32
+
+// Input capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-capabilities).
 const (
-	// InputTypeTuner designates the input as a tuner.
+	_ InputCap = 1 << iota
+	InputCapDVTimings
+	InputCapStd
+	InputCapNativeSize
+)
+
+// InputStatus is the input status type.
+type InputStatus uint32
+
+// Input statuses (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-status).
+const (
+	InputStatusNoPower InputStatus = 1 << iota
+	InputStatusNoSignal
+	InputStatusNoColor
+	_
+	InputStatusHFlip
+	InputStatusVFlip
+	_
+	_
+	InputStatusNoHLock
+	InputStatusColorKill
+	InputStatusNoVLock
+	InputStatusNoStdLock
+	_
+	_
+	_
+	_
+	InputStatusNoSync
+	InputStatusNoEqu
+	InputStatusNoCarrier
+	_
+	_
+	_
+	_
+	_
+	InputStatusMacroVision
+	InputStatusNoAccess
+	InputStatusVTR
+)
+
+// InputType is the input type type.
+type InputType uint32
+
+// Input types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-type).
+const (
 	InputTypeTuner uint32 = iota + 1
-	// InputTypeCamera designates the input as a camera.
 	InputTypeCamera
-	// InputTypeTouch designates the input as a touch device.
 	InputTypeTouch
 )
 
@@ -198,15 +265,145 @@ type PixFmt uint32
 // (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-rgb.html#pixfmt-rgb
 // https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/yuv-formats.html#yuv-formats
 // https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-reserved.html#reserved-formats).
+// Absent macros in Go and given consts must be compile-time constants, all values are coded with "|" and "<<".
 const (
-	PixFmtRGB332 PixFmt = 'R'<<24 | 'G'<<16 | 'B'<<8 | '1'
-	// TODO
+	PixFmtRGB332         PixFmt = 'R' | 'G'<<8 | 'B'<<16 | '1'<<24
+	PixFmtARGB444        PixFmt = 'A' | 'R'<<8 | '1'<<16 | '2'<<24
+	PixFmtXRGB444        PixFmt = 'X' | 'R'<<8 | '1'<<16 | '2'<<24
+	PixFmtRGBA444        PixFmt = 'R' | 'A'<<8 | '1'<<16 | '2'<<24
+	PixFmtRGBX444        PixFmt = 'R' | 'X'<<8 | '1'<<16 | '2'<<24
+	PixFmtABGR444        PixFmt = 'A' | 'B'<<8 | '1'<<16 | '2'<<24
+	PixFmtXBGR444        PixFmt = 'X' | 'B'<<8 | '1'<<16 | '2'<<24
+	PixFmtBGRA444        PixFmt = 'B' | 'A'<<8 | '1'<<16 | '2'<<24
+	PixFmtBGRX444        PixFmt = 'B' | 'X'<<8 | '1'<<16 | '2'<<24
+	PixFmtARGB555        PixFmt = 'A' | 'R'<<8 | '1'<<16 | '5'<<24
+	PixFmtXRGB555        PixFmt = 'X' | 'R'<<8 | '1'<<16 | '5'<<24
+	PixFmtRGBA555        PixFmt = 'R' | 'A'<<8 | '1'<<16 | '5'<<24
+	PixFmtRGBX555        PixFmt = 'R' | 'X'<<8 | '1'<<16 | '5'<<24
+	PixFmtABGR555        PixFmt = 'A' | 'B'<<8 | '1'<<16 | '5'<<24
+	PixFmtXBGR555        PixFmt = 'X' | 'B'<<8 | '1'<<16 | '5'<<24
+	PixFmtBGRA555        PixFmt = 'B' | 'A'<<8 | '1'<<16 | '5'<<24
+	PixFmtBGRX555        PixFmt = 'B' | 'X'<<8 | '1'<<16 | '5'<<24
+	PixFmtRGB565         PixFmt = 'R' | 'G'<<8 | 'B'<<16 | 'P'<<24
+	PixFmtARGB555X       PixFmt = PixFmtARGB555 | 1<<31
+	PixFmtXRGB555X       PixFmt = PixFmtXRGB555 | 1<<31
+	PixFmtRGB565X        PixFmt = 'R' | 'G'<<8 | 'B'<<16 | 'R'<<24
+	PixFmtBGR24          PixFmt = 'B' | 'G'<<8 | 'R'<<16 | '3'<<24
+	PixFmtRGB24          PixFmt = 'R' | 'G'<<8 | 'B'<<16 | '3'<<24
+	PixFmtBGR666         PixFmt = 'B' | 'G'<<8 | 'R'<<16 | 'H'<<24 // Format from hell?
+	PixFmtABGR32         PixFmt = 'A' | 'R'<<8 | '2'<<16 | '4'<<24
+	PixFmtXBGR32         PixFmt = 'X' | 'R'<<8 | '2'<<16 | '4'<<24
+	PixFmtBGRA32         PixFmt = 'R' | 'A'<<8 | '2'<<16 | '4'<<24
+	PixFmtBGRX32         PixFmt = 'R' | 'X'<<8 | '2'<<16 | '4'<<24
+	PixFmtRGBA32         PixFmt = 'A' | 'B'<<8 | '2'<<16 | '4'<<24
+	PixFmtRGBX32         PixFmt = 'X' | 'B'<<8 | '2'<<16 | '4'<<24
+	PixFmtARGB32         PixFmt = 'B' | 'A'<<8 | '2'<<16 | '4'<<24
+	PixFmtXRGB32         PixFmt = 'B' | 'X'<<8 | '2'<<16 | '4'<<24
+	PixFmtGrey           PixFmt = 'G' | 'R'<<8 | 'E'<<16 | 'Y'<<24
+	PixFmtY10            PixFmt = 'Y' | '1'<<8 | '0'<<16 | ' '<<24
+	PixFmtY12            PixFmt = 'Y' | '1'<<8 | '2'<<16 | ' '<<24
+	PixFmtY10BPack       PixFmt = 'Y' | '1'<<8 | '0'<<16 | 'B'<<24
+	PixFmtY10P           PixFmt = 'Y' | '1'<<8 | '0'<<16 | 'P'<<24
+	PixFmtY16            PixFmt = 'Y' | '1'<<8 | '6'<<16 | ' '<<24
+	PixFmtY16BE          PixFmt = PixFmtY16 | 1<<31
+	PixFmtY8I            PixFmt = 'Y' | '8'<<8 | 'I'<<16 | ' '<<24
+	PixFmtY12I           PixFmt = 'Y' | '1'<<8 | '2'<<16 | 'I'<<24
+	PixFmtUV8            PixFmt = 'U' | 'V'<<8 | '8'<<16 | ' '<<24
+	PixFmtYUYV           PixFmt = 'Y' | 'U'<<8 | 'Y'<<16 | 'V'<<24
+	PixFmtUYVY           PixFmt = 'U' | 'Y'<<8 | 'V'<<16 | 'Y'<<24
+	PixFmtYVYU           PixFmt = 'Y' | 'V'<<8 | 'Y'<<16 | 'U'<<24
+	PixFmtVYUY           PixFmt = 'V' | 'Y'<<8 | 'U'<<16 | 'Y'<<24
+	PixFmtY41P           PixFmt = 'Y' | '4'<<8 | '1'<<16 | 'P'<<24
+	PixFmtYVU420         PixFmt = 'Y' | 'V'<<8 | '1'<<16 | '2'<<24
+	PixFmtYUV420         PixFmt = 'Y' | 'U'<<8 | '1'<<16 | '2'<<24
+	PixFmtYUV420M        PixFmt = 'Y' | 'M'<<8 | '1'<<16 | '2'<<24
+	PixFmtYVU420M        PixFmt = 'Y' | 'M'<<8 | '2'<<16 | '1'<<24
+	PixFmtYUV422M        PixFmt = 'Y' | 'M'<<8 | '1'<<16 | '6'<<24
+	PixFmtYVU422M        PixFmt = 'Y' | 'M'<<8 | '6'<<16 | '1'<<24
+	PixFmtYUV444M        PixFmt = 'Y' | 'M'<<8 | '2'<<16 | '4'<<24
+	PixFmtYVU444M        PixFmt = 'Y' | 'M'<<8 | '4'<<16 | '2'<<24
+	PixFmtYVU410         PixFmt = 'Y' | 'V'<<8 | 'U'<<16 | '9'<<24
+	PixFmtYUV410         PixFmt = 'Y' | 'U'<<8 | 'V'<<16 | '9'<<24
+	PixFmtYUV422P        PixFmt = '4' | '2'<<8 | '2'<<16 | 'P'<<24
+	PixFmtYUV411P        PixFmt = '4' | '1'<<8 | '1'<<16 | 'P'<<24
+	PixFmtNV12           PixFmt = 'N' | 'V'<<8 | '1'<<16 | '2'<<24
+	PixFmtNV21           PixFmt = 'N' | 'V'<<8 | '2'<<16 | '1'<<24
+	PixFmtNV12M          PixFmt = 'N' | 'M'<<8 | '1'<<16 | '2'<<24
+	PixFmtNV21M          PixFmt = 'N' | 'M'<<8 | '2'<<16 | '1'<<24
+	PixFmtNV12MT         PixFmt = 'T' | 'M'<<8 | '1'<<16 | '2'<<24
+	PixFmtNV16           PixFmt = 'N' | 'V'<<8 | '1'<<16 | '6'<<24
+	PixFmtNV61           PixFmt = 'N' | 'V'<<8 | '6'<<16 | '1'<<24
+	PixFmtNV16M          PixFmt = 'N' | 'M'<<8 | '1'<<16 | '6'<<24
+	PixFmtNV61M          PixFmt = 'N' | 'M'<<8 | '6'<<16 | '1'<<24
+	PixFmtNV24           PixFmt = 'N' | 'V'<<8 | '2'<<16 | '4'<<24
+	PixFmtNV42           PixFmt = 'N' | 'V'<<8 | '4'<<16 | '2'<<24
+	PixFmtM420           PixFmt = 'M' | '4'<<8 | '2'<<16 | '0'<<24
+	PixFmtDV             PixFmt = 'd' | 'v'<<8 | 's'<<16 | 'd'<<24
+	PixFmtET61X251       PixFmt = 'E' | '6'<<8 | '2'<<16 | '5'<<24
+	PixFmtHI240          PixFmt = 'H' | 'I'<<8 | '2'<<16 | '4'<<24
+	PixFmtHM12           PixFmt = 'H' | 'M'<<8 | '1'<<16 | '2'<<24
+	PixFmtCPIA1          PixFmt = 'C' | 'P'<<8 | 'I'<<16 | 'A'<<24
+	PixFmtJPGL           PixFmt = 'J' | 'P'<<8 | 'G'<<16 | 'L'<<24
+	PixFmtSPCA501        PixFmt = 'S' | '5'<<8 | '0'<<16 | '1'<<24
+	PixFmtSPCA505        PixFmt = 'S' | '5'<<8 | '0'<<16 | '5'<<24
+	PixFmtSPCA508        PixFmt = 'S' | '5'<<8 | '0'<<16 | '8'<<24
+	PixFmtSPCA561        PixFmt = 'S' | '5'<<8 | '6'<<16 | '1'<<24
+	PixFmtPAC207         PixFmt = 'P' | '2'<<8 | '0'<<16 | '7'<<24
+	PixFmtMR97310A       PixFmt = 'M' | '3'<<8 | '1'<<16 | '0'<<24
+	PixFmtJL2005BCD      PixFmt = 'J' | 'L'<<8 | '2'<<16 | '0'<<24
+	PixFmtOV511          PixFmt = 'O' | '5'<<8 | '1'<<16 | '1'<<24
+	PixFmtOV518          PixFmt = 'O' | '5'<<8 | '1'<<16 | '8'<<24
+	PixFmtPJPG           PixFmt = 'P' | 'J'<<8 | 'P'<<16 | 'G'<<24
+	PixFmtSE401          PixFmt = 'S' | '4'<<8 | '0'<<16 | '1'<<24
+	PixFmtSQ90C          PixFmt = '9' | '0'<<8 | '5'<<16 | 'C'<<24
+	PixFmtMJPEG          PixFmt = 'M' | 'J'<<8 | 'P'<<16 | 'G'<<24
+	PixFmtPWC1           PixFmt = 'P' | 'W'<<8 | 'C'<<16 | '1'<<24
+	PixFmtPWC2           PixFmt = 'P' | 'W'<<8 | 'C'<<16 | '2'<<24
+	PixFmtSN9C10X        PixFmt = 'S' | '9'<<8 | '1'<<16 | '0'<<24
+	PixFmtN9C20XI420     PixFmt = 'S' | '9'<<8 | '2'<<16 | '0'<<24
+	PixFmtSN9C2028       PixFmt = 'S' | 'O'<<8 | 'N'<<16 | 'X'<<24
+	PixFmtSTV0680        PixFmt = 'S' | '6'<<8 | '8'<<16 | '0'<<24
+	PixFmtWNVA           PixFmt = 'W' | 'N'<<8 | 'V'<<16 | 'A'<<24
+	PixFmtTM6000         PixFmt = 'T' | 'M'<<8 | '6'<<16 | '0'<<24
+	PixFmtCITYYVYUY      PixFmt = 'C' | 'I'<<8 | 'T'<<16 | 'V'<<24
+	PixFmtKonica420      PixFmt = 'K' | 'O'<<8 | 'N'<<16 | 'I'<<24
+	PixFmtYYUV           PixFmt = 'Y' | 'Y'<<8 | 'U'<<16 | 'V'<<24
+	PixFmtY4             PixFmt = 'Y' | '0'<<8 | '4'<<16 | ' '<<24
+	PixFmtY6             PixFmt = 'Y' | '0'<<8 | '6'<<16 | ' '<<24
+	PixFmtS5CUYVYJPG     PixFmt = 'S' | '5'<<8 | 'C'<<16 | 'I'<<24
+	PixFmtMT21C          PixFmt = 'M' | 'T'<<8 | '2'<<16 | '1'<<24
+	PixFmtSunXITiledNV12 PixFmt = 'S' | 'T'<<8 | '1'<<16 | '2'<<24
+	PixFmtPAL8           PixFmt = 'P' | 'A'<<8 | 'L'<<16 | '8'<<24
+	PixFmtJPEG           PixFmt = 'J' | 'P'<<8 | 'E'<<16 | 'G'<<24
+	PixFmtMPEG           PixFmt = 'M' | 'P'<<8 | 'E'<<16 | 'G'<<24
+	PixFmtH264           PixFmt = 'H' | '2'<<8 | '6'<<16 | '4'<<24
+	PixFmtH264NoSC       PixFmt = 'A' | 'V'<<8 | 'C'<<16 | '1'<<24
+	PixFmtH264MVC        PixFmt = 'M' | '2'<<8 | '6'<<16 | '4'<<24
+	PixFmtH264Slice      PixFmt = 'S' | '2'<<8 | '6'<<16 | '4'<<24
+	PixFmtH263           PixFmt = 'H' | '2'<<8 | '6'<<16 | '3'<<24
+	PixFmtMPEG1          PixFmt = 'M' | 'P'<<8 | 'G'<<16 | '1'<<24
+	PixFmtMPEG2          PixFmt = 'M' | 'P'<<8 | 'G'<<16 | '2'<<24
+	PixFmtMPEG2Slice     PixFmt = 'M' | 'G'<<8 | '2'<<16 | 'S'<<24
+	PixFmtMPEG4          PixFmt = 'M' | 'P'<<8 | 'G'<<16 | '4'<<24
+	PixFmtXVID           PixFmt = 'X' | 'V'<<8 | 'I'<<16 | 'D'<<24
+	PixFmtVC1AnnexG      PixFmt = 'V' | 'C'<<8 | '1'<<16 | 'G'<<24
+	PixFmtVC1AnnexL      PixFmt = 'V' | 'C'<<8 | '1'<<16 | 'L'<<24
+	PixFmtVP8            PixFmt = 'V' | 'P'<<8 | '8'<<16 | '0'<<24
+	PixFmtVP8Frame       PixFmt = 'V' | 'P'<<8 | '8'<<16 | 'F'<<24
+	PixFmtVP9            PixFmt = 'V' | 'P'<<8 | '9'<<16 | '0'<<24
+	PixFmtHEVC           PixFmt = 'H' | 'E'<<8 | 'V'<<16 | 'C'<<24
+	PixFmtHEVCSlice      PixFmt = 'S' | '2'<<8 | '6'<<16 | '5'<<24
+	PixFmtFWHT           PixFmt = 'F' | 'W'<<8 | 'H'<<16 | 'T'<<24
+	PixFmtFWHTStateless  PixFmt = 'S' | 'F'<<8 | 'W'<<16 | 'H'<<24
+	// TODO There are more...
+)
 
-	PixFmtGrey PixFmt = 'G'<<24 | 'R'<<16 | 'E'<<8 | 'Y'
-	// TODO
+// PixFmtFlag is the pixel format flag type.
+type PixFmtFlag uint32
 
-	PxFmtDV PixFmt = 'd'<<24 | 'v'<<16 | 's'<<8 | 'd'
-	// TODO
+// Pixel format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-reserved.html#format-flags).
+const (
+	PixFmtFlagPremulAlpha = 1 << iota
 )
 
 // TcFlag is the timecode flag type.
@@ -403,6 +600,7 @@ type Capability struct {
 	Reserved     [3]uint32
 }
 
+// CtrlFwhtparams is v4l2_TODO
 type CtrlFwhtparams struct {
 	BackwardRefTS uint64
 	Version       uint32
@@ -415,6 +613,7 @@ type CtrlFwhtparams struct {
 	Quantization  uint32
 }
 
+// CtrlH264DecodeParams is v4l2_TODO
 type CtrlH264DecodeParams struct {
 	DPD                 [16]H264DPDEntry
 	NumSlices           uint16
@@ -424,6 +623,7 @@ type CtrlH264DecodeParams struct {
 	Flags               uint32
 }
 
+// CtrlHevcPps is v4l2_TODO
 type CtrlHevcPps struct {
 	NumExtraSliceHeaderBits      uint8
 	InitQpMinus26                int8
@@ -441,6 +641,7 @@ type CtrlHevcPps struct {
 	Flags                        uint64
 }
 
+// CtrlHevcSps is v4l2_TODO
 type CtrlHevcSps struct {
 	PicWidthInLumaSamples                uint16
 	PicHeightInLumaSamples               uint16
@@ -466,6 +667,7 @@ type CtrlHevcSps struct {
 	Flags                                uint64
 }
 
+// CtrlMpeg2Quantization is v4l2_TODO
 type CtrlMpeg2Quantization struct {
 	LoadIntraQuantiserMatrix          uint8
 	LoadNonIntraQuantiserMatrix       uint8
@@ -477,6 +679,7 @@ type CtrlMpeg2Quantization struct {
 	ChromaNonIntraQuantiserMatrix     [64]uint8
 }
 
+// CtrlMpeg2SliceParams is v4l2_TODO
 type CtrlMpeg2SliceParams struct {
 	BitSize            uint32
 	DataBitOffset      uint32
@@ -486,6 +689,7 @@ type CtrlMpeg2SliceParams struct {
 	QuantiserScaleCode uint32
 }
 
+// CtrlVP8FrameHeader is v4l2_TODO
 type CtrlVP8FrameHeader struct {
 	SegmentHeader         VP8SegmentHeader
 	LoopfilterHeader      VP8LoopfilterHeader
@@ -521,28 +725,28 @@ type FmtDesc struct {
 	Reserved    [4]uint32
 }
 
-// Format is an encapsulation of the various formats.
+// Format is v4l2_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html#c.v4l2_format).
 type Format struct {
 	Type    BufType
-	RawData [256]byte
+	RawData [256]byte // Union of several possible types.
 }
 
-// FrameSizeDiscrete is an encapsulation of a discrete frame size.
+// FrameSizeDiscrete is v4l2_framesize_discrete (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsize_discrete)).
 type FrameSizeDiscrete struct {
 	Width  uint32
 	Height uint32
 }
 
-// FrameSizeEnum is an encapsulation of frame size information.
+// FrameSizeEnum is v4l2_framesizeenum (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsizeenum)).
 type FrameSizeEnum struct {
 	Index     uint32
 	PixFormat PixFmt
 	Type      uint32
-	Stepwise  FrameSizeStepwise // Union with FrameSizeDiscrete
+	M         [24]byte // Union
 	Reserved  [2]uint32
 }
 
-// FrameSizeStepwise is an encapsulation of valid frame sizes in steps from min to max.
+// FrameSizeStepwise is v4l2_framesize_stepwise (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsize_stepwise).
 type FrameSizeStepwise struct {
 	MinWidth   uint32
 	MaxWidth   uint32
@@ -552,7 +756,7 @@ type FrameSizeStepwise struct {
 	StepHeight uint32
 }
 
-// Frequency is an encapsulation of a set of frquency attributes.
+// Frequency is v4l2_frequency (TODO).
 type Frequency struct {
 	Tuner     uint32
 	Type      uint32
@@ -560,6 +764,7 @@ type Frequency struct {
 	Reserved  [4]uint32
 }
 
+// H264DPDEntry is v4l2_TODO
 type H264DPDEntry struct {
 	ReferenceTS         uint64
 	FrameNum            uint16
@@ -569,12 +774,14 @@ type H264DPDEntry struct {
 	Flags               uint32
 }
 
+// H264PredWeightTable is v4l2_TODO
 type H264PredWeightTable struct {
 	LumaLog2WeightDenom   uint16
 	ChromaLog2WeightDenom uint16
 	Weightfactors         [2]H264WeightFactors
 }
 
+// H264WeightFactors is v4l2_TODO
 type H264WeightFactors struct {
 	LumaWeight   [32]int16
 	LumaOffset   [32]int16
@@ -582,20 +789,20 @@ type H264WeightFactors struct {
 	ChromaOffset [32]int16
 }
 
-// Input is an encapsulation of a set of input attributes.
+// Input is v4l2_input (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#c.v4l2_input).
 type Input struct {
 	Index        uint32
 	Name         [32]byte
-	Type         uint32
+	Type         InputType
 	AudioSet     uint32
 	Tuner        uint32
 	Standard     StdID
-	Status       uint32
-	Capabilities uint32
+	Status       InputStatus
+	Capabilities InputCap
 	Reserved     [3]uint32
 }
 
-// Modulator is an encapsulation of a set of modulator attributes.
+// Modulator is v4l2_modulator (TODO).
 type Modulator struct {
 	Index      uint32
 	Name       [32]byte
@@ -607,6 +814,7 @@ type Modulator struct {
 	Reserved   [3]uint32
 }
 
+// Mpeg2Picture is v4l2_TODO
 type Mpeg2Picture struct {
 	PictureCodingType        uint8
 	FCode                    [2][2]uint8
@@ -622,6 +830,7 @@ type Mpeg2Picture struct {
 	ProgressiveFrame         uint16
 }
 
+// Mpeg2Sequence is v4l2_TODO
 type Mpeg2Sequence struct {
 	HorizontalSize            uint16
 	VerticalSize              uint16
@@ -651,9 +860,9 @@ type PixFormat struct {
 	Field        Field
 	BytesPerLine uint32
 	SizeImage    uint32
-	ColorSpace   uint32
+	ColorSpace   ColorSpace
 	Priv         uint32
-	Flags        uint32
+	Flags        PixFmtFlag
 	Enc          uint32 // Anonymous union of YCbCr and HSV
 	Quantization uint32
 	XferFunc     uint32
@@ -730,7 +939,7 @@ type QueryMenu struct {
 	Reserved uint32
 }
 
-// RequestBuffers is an encapsulates a buffer request.
+// RequestBuffers is v4l2_requestbuffers (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-reqbufs.html#c.v4l2_requestbuffers).
 type RequestBuffers struct {
 	Count        uint32
 	Type         BufType
@@ -765,6 +974,7 @@ type Tuner struct {
 	Reserved   [4]uint32
 }
 
+// VP8EntropyCoderState is v4l2_TODO
 type VP8EntropyCoderState struct {
 	Range    uint8
 	Value    uint8
@@ -772,6 +982,7 @@ type VP8EntropyCoderState struct {
 	Padding  uint8
 }
 
+// VP8EntropyHeader is v4l2_TODO
 type VP8EntropyHeader struct {
 	CoeffProbs  [4][8][3][11]uint8
 	YModeProbs  [4]uint8
@@ -780,6 +991,7 @@ type VP8EntropyHeader struct {
 	Padding     [3]uint8
 }
 
+// VP8LoopfilterHeader is v4l2_TODO
 type VP8LoopfilterHeader struct {
 	RefFrmDelta    [4]int8
 	MBModeDelta    [4]int8
@@ -788,6 +1000,7 @@ type VP8LoopfilterHeader struct {
 	Flags          uint32
 }
 
+// VP8QuantizationHeader is v4l2_TODO
 type VP8QuantizationHeader struct {
 	YACQi     uint8
 	YDCDelta  int8
@@ -798,6 +1011,7 @@ type VP8QuantizationHeader struct {
 	Padding   uint16
 }
 
+// VP8SegmentHeader is v4l2_TODO
 type VP8SegmentHeader struct {
 	QuantUpdate  [4]int8
 	LFUpdate     [4]int8
