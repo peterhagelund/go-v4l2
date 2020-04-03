@@ -968,24 +968,24 @@ type PixFormat struct {
 	ColorSpace   ColorSpace
 	Priv         uint32
 	Flags        PixFmtFlag
-	Enc          uint32 // Anonymous union of YCbCr and HSV
+	M            uint32 // Anonymous union of YCbCr and HSV
 	Quantization Quantization
 	XferFunc     XferFunc
 }
 
-// PixFormatMPlane is an encapsulation of a multi-planar format.
+// PixFormatMPlane is v4l2_pix_format_mplane (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2-mplane.html#c.v4l2_pix_format_mplane).
 type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
 	PixFormat    PixFmt
 	Field        Field
-	ColorSpace   uint32
+	ColorSpace   ColorSpace
 	PlaneFmt     [8]PlanePixFormat
 	NumPlanes    uint8
-	Flags        uint8
+	Flags        PixFmtFlag
 	M            uint32 // Anonymous union of YCbCr and HSV
 	Quantization Quantization
-	XferFunc     uint8
+	XferFunc     XferFunc
 	Reserved     [7]uint8
 }
 
