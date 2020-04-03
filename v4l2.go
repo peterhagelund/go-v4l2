@@ -242,7 +242,7 @@ type InputType uint32
 
 // Input types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-type).
 const (
-	InputTypeTuner uint32 = iota + 1
+	InputTypeTuner InputType = iota + 1
 	InputTypeCamera
 	InputTypeTouch
 )
@@ -256,6 +256,27 @@ const (
 	MemoryUserPtr
 	MemoryOverlay
 	MemoryDMABuf
+)
+
+// OutputCap is output capabilities type.
+type OutputCap uint32
+
+// Output capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#output-capabilities).
+const (
+	_ OutputCap = 1 << iota
+	OutputCapDVTimings
+	OutputCapStd
+	OutputCapNativeSize
+)
+
+// OutputType is output type type.
+type OutputType uint32
+
+// Output types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#output-type).
+const (
+	OutputTypeModulator = 1 + iota
+	OutputTypeAnalog
+	OutputTypeAnalogVGAOverlay
 )
 
 // PixFmt is the pixel format type.
@@ -563,6 +584,65 @@ const (
 // StdID is the standard ID type.
 type StdID uint64
 
+// TunerCap is the tuner capability type.
+type TunerCap uint32
+
+// The tuner capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-capability).
+const (
+	TunerCapLow TunerCap = 1 << iota
+	TunerCapNorm
+	TunerCapHWSeekBounded
+	TunerCapHWSeekWrap
+	TunerCapStereo
+	TunerCapLang2
+	TunerCapLang1
+	TunerCapRDS
+	TunerCapRDSBlockIO
+	TunerRDSControls
+	TunerCapFreqBands
+	TunerCapHWSeekProgLim
+	TunerCap1Hz
+	TunerCapSAP = TunerCapLang2
+)
+
+// TunerMode is the tuner mode type.
+type TunerMode uint32
+
+// The tuner modes (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-audmode).
+const (
+	TunerModeMono TunerMode = iota
+	TunerModeStereo
+	TunerModeLang2
+	TunerModeLang1
+	TunerModeLang1Lang2
+	TunerModeSAP = TunerModeLang2
+)
+
+// TunerSub is the tuner RX sub-channel type.
+type TunerSub uint32
+
+// The tuner RX sub-channel flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-rxsubchans).
+const (
+	TunerSubMono TunerSub = 1 << iota
+	TunerSubStereo
+	TunerSubLang2
+	TunerSubLang1
+	TunerSubRDS
+	TunerSubSAP = TunerSubLang2
+)
+
+// TunerType is the tuner type type.
+type TunerType uint32
+
+// The tuner types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#c.v4l2_tuner_type).
+const (
+	TunerTypeRadio TunerType = iota + 1
+	TunerTypeAnalogTV
+	_
+	TunerTypeSDR
+	TunerTypeRF
+)
+
 // Audio is v4l2_audio (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#c.v4l2_audio).
 type Audio struct {
 	Index      uint32
@@ -802,7 +882,7 @@ type Input struct {
 	Reserved     [3]uint32
 }
 
-// Modulator is v4l2_modulator (TODO).
+// Modulator is v4l2_modulator (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html#c.v4l2_modulator).
 type Modulator struct {
 	Index      uint32
 	Name       [32]byte
@@ -840,15 +920,15 @@ type Mpeg2Sequence struct {
 	ChromaFormat              uint8
 }
 
-// Output is an encapsulation of a set of output attributes.
+// Output is v4l2_output (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#c.v4l2_output).
 type Output struct {
 	Index        uint32
 	Name         [32]byte
-	Type         uint32
+	Type         OutputType
 	AudioSet     uint32
 	Modulator    uint32
 	Standard     StdID
-	Capabilities uint32
+	Capabilities OutputCap
 	Reserved     [3]uint32
 }
 
@@ -959,16 +1039,16 @@ type Timecode struct {
 	UserBits [4]uint8
 }
 
-// Tuner is an encapsulation of a set of tuner attributes.
+// Tuner is v4l2_tuner (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#c.v4l2_tuner).
 type Tuner struct {
 	Index      uint32
 	Name       [32]byte
-	Type       uint32
-	Capability uint32
+	Type       TunerType
+	Capability TunerCap
 	RangeLow   uint32
 	RangeHigh  uint32
-	RXSubChans uint32
-	AudMode    uint32
+	RXSubChans TunerSub
+	AudMode    TunerMode
 	Signal     uint32
 	AFC        int32
 	Reserved   [4]uint32
