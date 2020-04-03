@@ -886,11 +886,11 @@ type Input struct {
 type Modulator struct {
 	Index      uint32
 	Name       [32]byte
-	Capability uint32
+	Capability TunerCap
 	RangeLow   uint32
 	RangeHigh  uint32
-	TXSubChans uint32
-	Type       uint32
+	TXSubChans TunerSub
+	Type       TunerType
 	Reserved   [3]uint32
 }
 
