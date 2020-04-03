@@ -653,6 +653,15 @@ const (
 	TunerTypeRF
 )
 
+// VBIFmtFlag is the VBI format flag type.
+type VBIFmtFlag uint32
+
+// VBI format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-raw-vbi.html#vbifmt-flags).
+const (
+	VBIFmtFlagUnsync VBIFmtFlag = 1 << iota
+	VBIFmtFlagInterlaces
+)
+
 // XferFunc is the transfer function type.
 type XferFunc uint32
 
@@ -703,6 +712,12 @@ type Capability struct {
 	Capabilities Cap
 	DeviceCaps   Cap
 	Reserved     [3]uint32
+}
+
+// Clip is v4l2_clip (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_clip#c.v4l2_clip).
+type Clip struct {
+	C    Rect
+	Next *Clip
 }
 
 // CtrlFwhtparams is v4l2_TODO
@@ -1044,6 +1059,14 @@ type QueryMenu struct {
 	Reserved uint32
 }
 
+// Rect is v4l2_rect (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_rect#c.v4l2_rect).
+type Rect struct {
+	Left   int32
+	Top    int32
+	Width  uint32
+	Height uint32
+}
+
 // RequestBuffers is v4l2_requestbuffers (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-reqbufs.html#c.v4l2_requestbuffers).
 type RequestBuffers struct {
 	Count        uint32
@@ -1077,6 +1100,17 @@ type Tuner struct {
 	Signal     uint32
 	AFC        int32
 	Reserved   [4]uint32
+}
+
+// VBIFormat is v4l2_vbi_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-raw-vbi.html#c.v4l2_vbi_format).
+type VBIFormat struct {
+	SamplingRate   uint32
+	Offset         uint32
+	SamplesPerLine uint32
+	Start          uint32
+	Count          uint32
+	Flags          VBIFmtFlag
+	Reserved       uint32
 }
 
 // VP8EntropyCoderState is v4l2_TODO
@@ -1123,6 +1157,17 @@ type VP8SegmentHeader struct {
 	SegmentProbs [3]uint8
 	Padding      uint8
 	Flags        uint32
+}
+
+// Window is v4l2_window (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html#c.v4l2_window).
+type Window struct {
+	W           Rect
+	Field       Field
+	ChromaKey   uint32
+	Clips       *Clip
+	ClipCount   uint32
+	Bitmap      *interface{}
+	GlobalAlpha uint8
 }
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
