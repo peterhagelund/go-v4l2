@@ -427,6 +427,16 @@ const (
 	PixFmtFlagPremulAlpha = 1 << iota
 )
 
+// Quantization is the quantization type.
+type Quantization uint32
+
+// The quantization flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_quantization).
+const (
+	QuantizationDefault Quantization = iota
+	QuantizationFullRange
+	QuantizationLimRange
+)
+
 // TcFlag is the timecode flag type.
 type TcFlag uint32
 
@@ -641,6 +651,21 @@ const (
 	_
 	TunerTypeSDR
 	TunerTypeRF
+)
+
+// XferFunc is the transfer function type.
+type XferFunc uint32
+
+// The transfer functions (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_xfer_func).
+const (
+	XferFuncDefault XferFunc = iota
+	XferFunc709
+	XferFuncSRGB
+	XferFuncOPRGB
+	XferFuncSMPTE240M
+	XferFuncNone
+	XferFuncDCIP3
+	XferFuncSMPTE2084
 )
 
 // Audio is v4l2_audio (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#c.v4l2_audio).
@@ -932,7 +957,7 @@ type Output struct {
 	Reserved     [3]uint32
 }
 
-// PixFormat is an encapsulation of a single-planar format.
+// PixFormat is v4l2_pix_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2.html#c.v4l2_pix_format).
 type PixFormat struct {
 	Width        uint32
 	Height       uint32
@@ -944,8 +969,8 @@ type PixFormat struct {
 	Priv         uint32
 	Flags        PixFmtFlag
 	Enc          uint32 // Anonymous union of YCbCr and HSV
-	Quantization uint32
-	XferFunc     uint32
+	Quantization Quantization
+	XferFunc     XferFunc
 }
 
 // PixFormatMPlane is an encapsulation of a multi-planar format.
@@ -958,8 +983,8 @@ type PixFormatMPlane struct {
 	PlaneFmt     [8]PlanePixFormat
 	NumPlanes    uint8
 	Flags        uint8
-	Enc          uint8 // Anonymous union of YCbCr and HSV
-	Quantization uint8
+	M            uint32 // Anonymous union of YCbCr and HSV
+	Quantization Quantization
 	XferFunc     uint8
 	Reserved     [7]uint8
 }
