@@ -20,7 +20,10 @@
 
 package v4l2
 
-import "syscall"
+import (
+	"syscall"
+	"unsafe"
+)
 
 // AudCap is the audio capability type.
 type AudCap uint32
@@ -437,6 +440,14 @@ const (
 	QuantizationLimRange
 )
 
+// SlicedVBIService is the sliced VBI service type.
+type SlicedVBIService uint16
+
+// The sliced VBI services (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-sliced-vbi.html#vbi-services2).
+const (
+	SlicedVBIServiceTeleTextB SlicedVBIService = 0x0001
+)
+
 // TcFlag is the timecode flag type.
 type TcFlag uint32
 
@@ -608,7 +619,7 @@ const (
 	TunerCapLang1
 	TunerCapRDS
 	TunerCapRDSBlockIO
-	TunerRDSControls
+	TunerCapRDSControls
 	TunerCapFreqBands
 	TunerCapHWSeekProgLim
 	TunerCap1Hz
@@ -717,7 +728,7 @@ type Capability struct {
 // Clip is v4l2_clip (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_clip#c.v4l2_clip).
 type Clip struct {
 	C    Rect
-	Next *Clip
+	Next unsafe.Pointer
 }
 
 // CtrlFwhtparams is v4l2_TODO
@@ -1004,7 +1015,7 @@ type PixFormatMPlane struct {
 	Reserved     [7]uint8
 }
 
-// Plane is an encapsulation of a single plane.
+// Plane is v4l2_plane (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html?highlight=v4l2_plane#c.v4l2_plane).
 type Plane struct {
 	BytesUsed  uint32
 	Length     uint32
@@ -1013,7 +1024,7 @@ type Plane struct {
 	Reserved   [11]uint32
 }
 
-// PlanePixFormat is an encapsulation of a plane format.
+// PlanePixFormat is v4l2_plane_pix_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2-mplane.html#c.v4l2_plane_pix_format).
 type PlanePixFormat struct {
 	SizeImage    uint32
 	BytesPerLine uint32
@@ -1074,6 +1085,14 @@ type RequestBuffers struct {
 	Memory       Memory
 	Capabilities Cap
 	Reserved     [1]uint32
+}
+
+// SlicedVBIFormat is v4l2_sliced_vbi_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-sliced-vbi.html#c.v4l2_sliced_vbi_format).
+type SlicedVBIFormat struct {
+	ServiceSet   uint32
+	ServiceLines [2][24]SlicedVBIService
+	IOSize       uint32
+	Reserved     [2]uint32
 }
 
 // Timecode is v4l2_timecode (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_timecode).
@@ -1168,6 +1187,15 @@ type Window struct {
 	ClipCount   uint32
 	Bitmap      *interface{}
 	GlobalAlpha uint8
+}
+
+// QueryCapabilities queries the device capabilities.
+func QueryCapabilities(fd int) (*Capability, error) {
+	capability := &Capability{}
+	if err := Ioctl(fd, VidIocQueryCap, uintptr(unsafe.Pointer(capability))); err != nil {
+		return nil, err
+	}
+	return capability, nil
 }
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
