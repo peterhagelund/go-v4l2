@@ -126,7 +126,7 @@ type Cap uint32
 
 // Device capability flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html#device-capabilities).
 const (
-	CapVideoCapture uint32 = 1 << iota
+	CapVideoCapture Cap = 1 << iota
 	CapVideoOutput
 	CapVideoOverlay
 	_
@@ -1196,6 +1196,48 @@ func QueryCapabilities(fd int) (*Capability, error) {
 		return nil, err
 	}
 	return capability, nil
+}
+
+// EnumFormats enumerates the supported formats.
+func EnumFormats(fd int, bufType BufType) ([]*FmtDesc, error) {
+	var index uint32 = 0
+	fmtDescs := make([]*FmtDesc, 0, 8)
+	for {
+		fmtDesc := &FmtDesc{}
+		fmtDesc.Index = index
+		fmtDesc.Type = bufType
+		err := Ioctl(fd, VidIocEnumFmt, uintptr(unsafe.Pointer(fmtDesc)))
+		if err != nil {
+			if err == syscall.EINVAL {
+				break
+			}
+			return nil, err
+		}
+		fmtDescs = append(fmtDescs, fmtDesc)
+		index++
+	}
+	return fmtDescs, nil
+}
+
+// EnumFrameSizes enumerates the available frame sizes for a pixel format.
+func EnumFrameSizes(fd int, pixFormat PixFmt) ([]*FrameSizeEnum, error) {
+	var index uint32 = 0
+	frameSizeEnums := make([]*FrameSizeEnum, 0, 4)
+	for {
+		frameSizeEnum := &FrameSizeEnum{}
+		frameSizeEnum.Index = index
+		frameSizeEnum.PixFormat = pixFormat
+		err := Ioctl(fd, VidIocEnumFrameSizes, uintptr(unsafe.Pointer(frameSizeEnum)))
+		if err != nil {
+			if err == syscall.EINVAL {
+				break
+			}
+			return nil, err
+		}
+		frameSizeEnums = append(frameSizeEnums, frameSizeEnum)
+		index++
+	}
+	return frameSizeEnums, nil
 }
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
