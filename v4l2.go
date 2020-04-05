@@ -1240,6 +1240,21 @@ func EnumFrameSizes(fd int, pixFormat PixFmt) ([]*FrameSizeEnum, error) {
 	return frameSizeEnums, nil
 }
 
+// SetFormat sets the format and frame size.
+func SetFormat(fd int, bufType BufType, pixFormat PixFmt, width uint32, height uint32) (uint32, uint32, error) {
+	format := &Format{}
+	format.Type = bufType
+	pix := (*PixFormat)(unsafe.Pointer(&format.RawData[0]))
+	pix.Width = width
+	pix.Height = height
+	pix.PixFormat = pixFormat
+	pix.Field = FieldNone
+	if err := Ioctl(fd, VidIocSFmt, uintptr(unsafe.Pointer(format))); err != nil {
+		return 0, 0, err
+	}
+	return pix.Width, pix.Height, nil
+}
+
 // BytesToString converts a low-level, null-terminated C-string to a string.
 func BytesToString(b []byte) string {
 	var n int

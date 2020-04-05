@@ -86,25 +86,43 @@ func TestEnumFrameSizes(t *testing.T) {
 		if frameSizeEnum.Type == FrmSizeTypeDiscrete {
 			frameSizeDiscrete := (*FrameSizeDiscrete)(unsafe.Pointer(&frameSizeEnum.M))
 			if frameSizeDiscrete.Width == 0 {
-				t.Fatal("zero-width frame size")
+				t.Fatal("zero width frame size")
 			}
 			if frameSizeDiscrete.Height == 0 {
-				t.Fatal("zero-height frame size")
+				t.Fatal("zero height frame size")
 			}
 		} else {
 			frameSizeStepwise := (*FrameSizeStepwise)(unsafe.Pointer(&frameSizeEnum.M))
 			if frameSizeStepwise.MinHeight == 0 {
-				t.Fatal("zero-min-height")
+				t.Fatal("zero min height")
 			}
 			if frameSizeStepwise.MaxHeight == 0 {
-				t.Fatal("zero-max-height")
+				t.Fatal("zero max height")
 			}
 			if frameSizeStepwise.MinWidth == 0 {
-				t.Fatal("zero-min-width")
+				t.Fatal("zero min width")
 			}
 			if frameSizeStepwise.MaxWidth == 0 {
-				t.Fatal("zero-max-width")
+				t.Fatal("zero max width")
 			}
 		}
+	}
+}
+
+func TestSetFormat(t *testing.T) {
+	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
+	if err != nil {
+		t.Fatal("unable to open device")
+	}
+	defer unix.Close(fd)
+	width, height, err := SetFormat(fd, BufTypeVideoCapture, PixFmtJPEG, 1024, 768)
+	if err != nil {
+		t.Fatal("unable to set format")
+	}
+	if width == 0 {
+		t.Fatal("zero width returned")
+	}
+	if height == 0 {
+		t.Fatal("zero height returned")
 	}
 }
