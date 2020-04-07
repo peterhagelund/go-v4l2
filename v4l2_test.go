@@ -1,8 +1,12 @@
 package v4l2
 
 import (
+	"bytes"
+	"image"
 	"testing"
 	"unsafe"
+
+	_ "image/jpeg"
 
 	"golang.org/x/sys/unix"
 )
@@ -124,5 +128,71 @@ func TestSetFormat(t *testing.T) {
 	}
 	if height == 0 {
 		t.Fatal("zero height returned")
+	}
+}
+
+func TestRequestDriverBuffers(t *testing.T) {
+	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
+	if err != nil {
+		t.Fatal("unable to open device")
+	}
+	defer unix.Close(fd)
+	count, err := RequestDriverBuffers(fd, 4, BufTypeVideoCapture, MemoryMmap)
+	if err != nil {
+		t.Fatal("unable to request driver buffers")
+	}
+	if count == 0 {
+		t.Fatal("no driver buffers available")
+	}
+	_, err = RequestDriverBuffers(fd, 0, BufTypeVideoCapture, MemoryMmap)
+	if err != nil {
+		t.Fatal("unable to adjust requested driver buffers down to zero")
+	}
+}
+
+func TestGrabFrame(t *testing.T) {
+	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
+	if err != nil {
+		t.Fatal("unable to open device")
+	}
+	defer unix.Close(fd)
+	if _, _, err := SetFormat(fd, BufTypeVideoCapture, PixFmtJPEG, 1024, 768); err != nil {
+		t.Fatal("unable to set format")
+	}
+	count, err := RequestDriverBuffers(fd, 4, BufTypeVideoCapture, MemoryMmap)
+	if err != nil {
+		t.Fatal("unable to request driver buffers")
+	}
+	defer RequestDriverBuffers(fd, 0, BufTypeVideoCapture, MemoryMmap)
+	buffers, err := MmapBuffers(fd, count, BufTypeVideoCapture)
+	if err != nil {
+		t.Fatal("unable to mmap buffers")
+	}
+	defer MunmapBuffers(buffers)
+	if err := StreamOn(fd, BufTypeVideoCapture); err != nil {
+		t.Fatal("unable to turn on streaming")
+	}
+	defer StreamOff(fd, BufTypeVideoCapture)
+	frame, err := GrabFrame(fd, BufTypeVideoCapture, MemoryMmap, buffers)
+	if err != nil {
+		t.Fatal("unable to grab frame")
+	}
+	if frame == nil {
+		t.Fatal("nil frame returned")
+	}
+	if len(frame) == 0 {
+		t.Fatal("empty frame returned")
+	}
+	buffer := bytes.NewBuffer(frame)
+	image, name, err := image.Decode(buffer)
+	if err != nil {
+		t.Fatal("unable to decode frame")
+	}
+	if name != "jpeg" {
+		t.Fatal("returned frame is not a JPEG image")
+	}
+	bounds := image.Bounds()
+	if bounds.Dx() != 1024 || bounds.Dy() != 768 {
+		t.Fatal("image has incorrect size")
 	}
 }

@@ -1281,37 +1281,6 @@ func QueryBuffer(fd int, index uint32, bufType BufType, memory Memory) (*Buffer,
 	return buffer, nil
 }
 
-// MmapBuffers memory maps buffers.
-// The buffers must have been requested with a memory type of MemoryMMap.
-func MmapBuffers(fd int, count uint32, bufType BufType) ([][]byte, error) {
-	var index uint32
-	buffers := make([][]byte, 0)
-	for index = 0; index < count; index++ {
-		buffer, err := QueryBuffer(fd, index, bufType, MemoryMmap)
-		if err != nil {
-			return nil, err
-		}
-		offset := int64(buffer.M)
-		length := int(buffer.Length)
-		data, err := unix.Mmap(fd, offset, length, unix.PROT_READ|unix.PROT_WRITE, unix.MAP_SHARED)
-		if err != nil {
-			return nil, err
-		}
-		buffers = append(buffers, data)
-	}
-	return buffers, nil
-}
-
-// MunmapBuffers memory unmaps previously mapped driver buffers.
-func MunmapBuffers(buffers [][]byte) error {
-	for _, data := range buffers {
-		if err := unix.Munmap(data); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // EnqueueBuffer enqueues a buffer.
 func EnqueueBuffer(fd int, buffer *Buffer) error {
 	return Ioctl(fd, VidIocQBuf, uintptr(unsafe.Pointer(buffer)))
@@ -1336,6 +1305,59 @@ func StreamOn(fd int, bufType BufType) error {
 // StreamOff turns off streaming for the specified buffer type.
 func StreamOff(fd int, bufType BufType) error {
 	return Ioctl(fd, VidIocStreamOff, uintptr(unsafe.Pointer(&bufType)))
+}
+
+// GrabFrame grabs a single frame.
+func GrabFrame(fd int, bufType BufType, memory Memory, buffers [][]byte) ([]byte, error) {
+	if err := WaitFd(fd); err != nil {
+		return nil, err
+	}
+	buffer, err := DequeueBuffer(fd, bufType, memory)
+	if err != nil {
+		return nil, err
+	}
+	data := buffers[buffer.Index]
+	frame := make([]byte, buffer.BytesUsed)
+	copy(frame, data)
+	err = EnqueueBuffer(fd, buffer)
+	if err != nil {
+		return nil, err
+	}
+	return frame, nil
+}
+
+// MmapBuffers memory maps buffers.
+// The buffers must have been requested with a memory type of MemoryMMap.
+func MmapBuffers(fd int, count uint32, bufType BufType) ([][]byte, error) {
+	var index uint32
+	buffers := make([][]byte, 0)
+	for index = 0; index < count; index++ {
+		buffer, err := QueryBuffer(fd, index, bufType, MemoryMmap)
+		if err != nil {
+			return nil, err
+		}
+		offset := int64(buffer.M)
+		length := int(buffer.Length)
+		data, err := unix.Mmap(fd, offset, length, unix.PROT_READ|unix.PROT_WRITE, unix.MAP_SHARED)
+		if err != nil {
+			return nil, err
+		}
+		buffers = append(buffers, data)
+		if err := EnqueueBuffer(fd, buffer); err != nil {
+			return nil, err
+		}
+	}
+	return buffers, nil
+}
+
+// MunmapBuffers memory unmaps previously mapped driver buffers.
+func MunmapBuffers(buffers [][]byte) error {
+	for _, data := range buffers {
+		if err := unix.Munmap(data); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
