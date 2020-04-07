@@ -7,7 +7,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func TestQueryCapabilit(t *testing.T) {
+func TestQueryCapabilities(t *testing.T) {
 	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
 	if err != nil {
 		t.Fatal("unable to open device")

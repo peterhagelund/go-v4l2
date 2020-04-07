@@ -23,6 +23,8 @@ package v4l2
 import (
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/unix"
 )
 
 // AudCap is the audio capability type.
@@ -255,7 +257,7 @@ type Memory uint32
 
 // Memory types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_memory).
 const (
-	MemoryMMap Memory = iota + 1
+	MemoryMmap Memory = iota + 1
 	MemoryUserPtr
 	MemoryOverlay
 	MemoryDMABuf
@@ -1253,6 +1255,87 @@ func SetFormat(fd int, bufType BufType, pixFormat PixFmt, width uint32, height u
 		return 0, 0, err
 	}
 	return pix.Width, pix.Height, nil
+}
+
+// RequestDriverBuffers requests driver buffers.
+func RequestDriverBuffers(fd int, count uint32, bufType BufType, memory Memory) (uint32, error) {
+	requestBuffers := &RequestBuffers{}
+	requestBuffers.Count = count
+	requestBuffers.Type = bufType
+	requestBuffers.Memory = memory
+	if err := Ioctl(fd, VidIocReqBufs, uintptr(unsafe.Pointer(requestBuffers))); err != nil {
+		return 0, err
+	}
+	return requestBuffers.Count, nil
+}
+
+// QueryBuffer queries a buffer.
+func QueryBuffer(fd int, index uint32, bufType BufType, memory Memory) (*Buffer, error) {
+	buffer := &Buffer{}
+	buffer.Index = index
+	buffer.Type = bufType
+	buffer.Memory = memory
+	if err := Ioctl(fd, VidIocQueryBuf, uintptr(unsafe.Pointer(buffer))); err != nil {
+		return nil, err
+	}
+	return buffer, nil
+}
+
+// MmapBuffers memory maps buffers.
+// The buffers must have been requested with a memory type of MemoryMMap.
+func MmapBuffers(fd int, count uint32, bufType BufType) ([][]byte, error) {
+	var index uint32
+	buffers := make([][]byte, 0)
+	for index = 0; index < count; index++ {
+		buffer, err := QueryBuffer(fd, index, bufType, MemoryMmap)
+		if err != nil {
+			return nil, err
+		}
+		offset := int64(buffer.M)
+		length := int(buffer.Length)
+		data, err := unix.Mmap(fd, offset, length, unix.PROT_READ|unix.PROT_WRITE, unix.MAP_SHARED)
+		if err != nil {
+			return nil, err
+		}
+		buffers = append(buffers, data)
+	}
+	return buffers, nil
+}
+
+// MunmapBuffers memory unmaps previously mapped driver buffers.
+func MunmapBuffers(buffers [][]byte) error {
+	for _, data := range buffers {
+		if err := unix.Munmap(data); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// EnqueueBuffer enqueues a buffer.
+func EnqueueBuffer(fd int, buffer *Buffer) error {
+	return Ioctl(fd, VidIocQBuf, uintptr(unsafe.Pointer(buffer)))
+}
+
+// DequeueBuffer dequeues a buffer.
+func DequeueBuffer(fd int, bufType BufType, memory Memory) (*Buffer, error) {
+	buffer := &Buffer{}
+	buffer.Type = bufType
+	buffer.Memory = memory
+	if err := Ioctl(fd, VidIocDQBuf, uintptr(unsafe.Pointer(buffer))); err != nil {
+		return nil, err
+	}
+	return buffer, nil
+}
+
+// StreamOn turns on streaming for the specified buffer type.
+func StreamOn(fd int, bufType BufType) error {
+	return Ioctl(fd, VidIocStreamOn, uintptr(unsafe.Pointer(&bufType)))
+}
+
+// StreamOff turns off streaming for the specified buffer type.
+func StreamOff(fd int, bufType BufType) error {
+	return Ioctl(fd, VidIocStreamOff, uintptr(unsafe.Pointer(&bufType)))
 }
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
