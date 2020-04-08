@@ -196,3 +196,16 @@ func TestGrabFrame(t *testing.T) {
 		t.Fatal("image has incorrect size")
 	}
 }
+
+func TestBytesToString(t *testing.T) {
+	b1 := [...]byte{}
+	s1 := BytesToString(b1[:])
+	if len(s1) != 0 {
+		t.Fatal("empty slice did not yield zero length string")
+	}
+	b2 := [...]byte{0x41, 0x42, 0x43, 0x31, 0x32, 0x33}
+	s2 := BytesToString(b2[:])
+	if s2 != "ABC123" {
+		t.Fatal("incorrect string returned")
+	}
+}

@@ -1327,7 +1327,7 @@ func GrabFrame(fd int, bufType BufType, memory Memory, buffers [][]byte) ([]byte
 }
 
 // MmapBuffers memory maps buffers.
-// The buffers must have been requested with a memory type of MemoryMMap.
+// The buffers must have been requested with a memory type of MemoryMmap.
 func MmapBuffers(fd int, count uint32, bufType BufType) ([][]byte, error) {
 	var index uint32
 	buffers := make([][]byte, 0)
