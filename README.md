@@ -28,7 +28,7 @@ require "github.com/peterhagelund/go-v4l2" v0.2.0
 
 ```go
 import (
-    "bytes"
+	"bytes"
 	"fmt"
 	"image"
 	"image/jpeg"
