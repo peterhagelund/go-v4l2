@@ -190,9 +190,12 @@ const (
 	FmtFlagDynResolution
 )
 
+// FrmSizeType is the frame size type type.
+type FrmSizeType uint32
+
 // Frame size types (TODO).
 const (
-	FrmSizeTypeDiscrete uint32 = iota + 1
+	FrmSizeTypeDiscrete FrmSizeType = iota + 1
 	FrmSizeTypeContinuous
 	FrmSizeTypeStepwise
 )
@@ -874,7 +877,7 @@ type FrameSizeDiscrete struct {
 type FrameSizeEnum struct {
 	Index     uint32
 	PixFormat PixFmt
-	Type      uint32
+	Type      FrmSizeType
 	M         [24]byte // Union
 	Reserved  [2]uint32
 }
