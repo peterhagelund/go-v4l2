@@ -21,23 +21,23 @@ go get -u github.com/peterhagelund/go-v4l2
 In `go.mod`:
 
 ```
-require "github.com/peterhagelund/go-v4l2" v0.1.2
+require "github.com/peterhagelund/go-v4l2" v0.1.3
 ```
 
 ## Using
 
 ```go
     import (
-	    "bytes"
-	    "fmt"
-	    "image"
-	    "image/jpeg"
-	    "io/ioutil"
-	    "os"
-    	"unsafe"
+		"bytes"
+		"fmt"
+		"image"
+		"image/jpeg"
+		"io/ioutil"
+		"os"
+		"unsafe"
 
-	    "github.com/peterhagelund/go-v4l2"
-	    "golang.org/x/sys/unix"
+		"github.com/peterhagelund/go-v4l2"
+		"golang.org/x/sys/unix"
     )
 
     ...
