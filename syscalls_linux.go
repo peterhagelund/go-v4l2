@@ -35,7 +35,7 @@ func Ioctl(fd int, op uint32, arg uintptr) error {
 
 // SetFd sets the the bit for the fd in the fd set.
 func SetFd(fd int, s *syscall.FdSet) {
-	s.Bits[fd/64] |= 1 << (uint(fd) % 64)
+	s.Bits[fd/32] |= 1 << (uint(fd) % 32)
 }
 
 // WaitFd waits for data to be ready for the specified fd.
