@@ -733,7 +733,7 @@ type Capability struct {
 // Clip is v4l2_clip (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_clip#c.v4l2_clip).
 type Clip struct {
 	C    Rect
-	Next unsafe.Pointer
+	Next uintptr
 }
 
 // CtrlFwhtparams is v4l2_TODO
