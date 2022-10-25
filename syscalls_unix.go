@@ -18,34 +18,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// +build darwin,amd64
+// +build darwin dragonfly freebsd linux netbsd openbsd solaris
 
 package v4l2
 
-import "syscall"
+import "golang.org/x/sys/unix"
 
 // Ioctl performs a low-level ioctl operation.
 func Ioctl(fd int, op uint32, arg uintptr) error {
-	_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(op), arg)
+	_, _, err := unix.RawSyscall(unix.SYS_IOCTL, uintptr(fd), uintptr(op), arg)
 	if err == 0 {
 		return nil
 	}
 	return err
 }
 
-// SetFd sets the the bit for the fd in the fd set.
-func SetFd(fd int, s *syscall.FdSet) {
-	s.Bits[fd/32] |= 1 << (uint(fd) % 32)
-}
-
 // WaitFd waits for data to be ready for the specified fd.
 func WaitFd(fd int) error {
-	fdSet := &syscall.FdSet{}
-	SetFd(fd, fdSet)
-	timeout := &syscall.Timeval{
-		Sec:  2,
-		Usec: 0,
-	}
-	err := syscall.Select(fd+1, fdSet, nil, nil, timeout)
+	fds := []unix.PollFd{{Fd: int32(fd), Events: unix.POLLIN}}
+	_, err := unix.Poll(fds, 2000)
 	return err
 }
