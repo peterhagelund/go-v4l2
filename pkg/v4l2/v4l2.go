@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Peter Hagelund
+// Copyright (c) 2020-2023 Peter Hagelund
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import (
 // AudCap is the audio capability type.
 type AudCap uint32
 
-// Audio capability flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#audio-capability).
+// Audio capability flags.
 const (
 	AudCapStereo AudCap = 1 << iota
 	AudCapAVL
@@ -39,7 +39,7 @@ const (
 // AudMode is the audio mode type.
 type AudMode uint32
 
-// Audio mode flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#audio-mode).
+// Audio mode flags.
 const (
 	AudModeAVL = 1 << iota
 )
@@ -47,7 +47,7 @@ const (
 // ColorSpace is the the color space type.
 type ColorSpace uint32
 
-// Color spaces (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_colorspace).
+// Color spaces.
 const (
 	ColorSpaceDefault ColorSpace = iota // TODO Find actual values
 	ColorSpaceSMPTE170M
@@ -63,7 +63,7 @@ const (
 	ColorSpaceRaw
 )
 
-// Buffer capabilities (TODO).
+// Buffer capabilities.
 const (
 	BufCapSupportsMMap uint32 = 1 << iota
 	BufCapSupportsUserPtr
@@ -76,7 +76,7 @@ const (
 // BufFlag is the buffer flag type.
 type BufFlag uint32
 
-// Buffer flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#buffer-flags).
+// Buffer flags.
 const (
 	BufFlagMapped BufFlag = 1 << iota
 	BufFlagQueued
@@ -105,7 +105,7 @@ const (
 // BufType is the buffer type type.
 type BufType uint32
 
-// Buffer types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_buf_type).
+// Buffer types.
 const (
 	BufTypeVideoCapture BufType = iota + 1
 	BufTypeVideoOutput
@@ -126,7 +126,7 @@ const (
 // Cap is the device capability type.
 type Cap uint32
 
-// Device capability flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html#device-capabilities).
+// Device capability flags.
 const (
 	CapVideoCapture Cap = 1 << iota
 	CapVideoOutput
@@ -152,7 +152,7 @@ const (
 	CapExtPixFormat
 	CapSDROutput
 	CapMetaCapture
-	capReadWrite
+	CapReadWrite
 	CapAsyncIO
 	CapStreaming
 	CapMetaOutput
@@ -165,7 +165,7 @@ const (
 // Field is the field type.
 type Field uint32
 
-// Field types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/field-order.html#c.v4l2_field).
+// Field types.
 const (
 	FieldAny Field = iota
 	FieldNone
@@ -182,7 +182,7 @@ const (
 // FmtFlag is the format flag type.
 type FmtFlag uint32
 
-// Format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html#fmtdesc-flags).
+// Format flags.
 const (
 	FmtFlagCompressed FmtFlag = 1 << iota
 	FmtFlagEmulated
@@ -193,7 +193,7 @@ const (
 // FrmSizeType is the frame size type type.
 type FrmSizeType uint32
 
-// Frame size types (TODO).
+// Frame size types.
 const (
 	FrmSizeTypeDiscrete FrmSizeType = iota + 1
 	FrmSizeTypeContinuous
@@ -203,7 +203,7 @@ const (
 // InputCap is the input capabilities type.
 type InputCap uint32
 
-// Input capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-capabilities).
+// Input capabilities.
 const (
 	_ InputCap = 1 << iota
 	InputCapDVTimings
@@ -214,7 +214,7 @@ const (
 // InputStatus is the input status type.
 type InputStatus uint32
 
-// Input statuses (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-status).
+// Input statuses.
 const (
 	InputStatusNoPower InputStatus = 1 << iota
 	InputStatusNoSignal
@@ -248,7 +248,7 @@ const (
 // InputType is the input type type.
 type InputType uint32
 
-// Input types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#input-type).
+// Input types.
 const (
 	InputTypeTuner InputType = iota + 1
 	InputTypeCamera
@@ -258,7 +258,7 @@ const (
 // Memory is the memory type.
 type Memory uint32
 
-// Memory types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_memory).
+// Memory types.
 const (
 	MemoryMmap Memory = iota + 1
 	MemoryUserPtr
@@ -269,7 +269,7 @@ const (
 // OutputCap is output capabilities type.
 type OutputCap uint32
 
-// Output capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#output-capabilities).
+// Output capabilities.
 const (
 	_ OutputCap = 1 << iota
 	OutputCapDVTimings
@@ -280,7 +280,7 @@ const (
 // OutputType is output type type.
 type OutputType uint32
 
-// Output types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#output-type).
+// Output types.
 const (
 	OutputTypeModulator = 1 + iota
 	OutputTypeAnalog
@@ -290,10 +290,7 @@ const (
 // PixFmt is the pixel format type.
 type PixFmt uint32
 
-// Pixel formats
-// (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-rgb.html#pixfmt-rgb
-// https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/yuv-formats.html#yuv-formats
-// https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-reserved.html#reserved-formats).
+// Pixel formats.
 // Absent macros in Go and given consts must be compile-time constants, all values are coded with "|" and "<<".
 const (
 	PixFmtRGB332         PixFmt = 'R' | 'G'<<8 | 'B'<<16 | '1'<<24
@@ -430,7 +427,7 @@ const (
 // PixFmtFlag is the pixel format flag type.
 type PixFmtFlag uint32
 
-// Pixel format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-reserved.html#format-flags).
+// Pixel format flags.
 const (
 	PixFmtFlagPremulAlpha = 1 << iota
 )
@@ -438,7 +435,7 @@ const (
 // Quantization is the quantization type.
 type Quantization uint32
 
-// The quantization flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_quantization).
+// The quantization flags.
 const (
 	QuantizationDefault Quantization = iota
 	QuantizationFullRange
@@ -448,7 +445,7 @@ const (
 // SlicedVBIService is the sliced VBI service type.
 type SlicedVBIService uint16
 
-// The sliced VBI services (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-sliced-vbi.html#vbi-services2).
+// The sliced VBI service.
 const (
 	SlicedVBIServiceTeleTextB SlicedVBIService = 0x0001
 )
@@ -456,7 +453,7 @@ const (
 // TcFlag is the timecode flag type.
 type TcFlag uint32
 
-// Timecode flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#timecode-flags).
+// Timecode flags.
 const (
 	TcFlagUserDefined TcFlag = 1 << iota
 	TcFlagDropFrame
@@ -469,7 +466,7 @@ const (
 // TcType is the timecode type type.
 type TcType uint32
 
-// Timecode types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#timecode-type).
+// Timecode types.
 const (
 	TcType24Fps TcType = iota + 1
 	TcType25Fps
@@ -479,131 +476,131 @@ const (
 )
 
 const (
-	// VidIocQueryCap is VIDIOC_QUERYCAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html).
+	// VidIocQueryCap is VIDIOC_QUERYCAP.
 	VidIocQueryCap uint32 = 0x80685600
 	// VidIocReserved is VIDIOC_RESERVED.
 	VidIocReserved = 0x00005601
-	// VidIocEnumFmt is (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html).
+	// VidIocEnumFmt is VIDIOC_ENUM_FMT.
 	VidIocEnumFmt = 0xc0405602
-	// VidIocGFmt is VIDIOC_G_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
+	// VidIocGFmt is VIDIOC_G_FMT.
 	VidIocGFmt = 0xc0d05604
-	// VidIocSFmt is VIDIOC_S_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
-	VidIocSFmt = 0xc0cc5605
-	// VidIocReqBufs is VIDIOC_REQBUFS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-reqbufs.html).
+	// VidIocSFmt is VIDIOC_S_FMT.
+	VidIocSFmt = 0xc0d05605
+	// VidIocReqBufs is VIDIOC_REQBUFS.
 	VidIocReqBufs = 0xc0145608
-	// VidIocQueryBuf is VIDIOC_QUERYBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querybuf.html).
-	VidIocQueryBuf = 0xc0445609
-	// VidIocGFBuf is VIDIOC_G_FBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fbuf.html).
+	// VidIocQueryBuf is VIDIOC_QUERYBUF.
+	VidIocQueryBuf = 0xc0585609
+	// VidIocGFBuf is VIDIOC_G_FBUF.
 	VidIocGFBuf = 0x8030560a
-	// VidIocSFBuf is VIDIOC_S_FBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fbuf.html).
+	// VidIocSFBuf is VIDIOC_S_FBUF.
 	VidIocSFBuf = 0x4030560b
-	// VidIocOverlay is VIDIOC_OVERLAY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-overlay.html).
+	// VidIocOverlay is VIDIOC_OVERLAY.
 	VidIocOverlay = 0x4004560e
-	// VidIocQBuf is VIDIOC_QBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-qbuf.html).
-	VidIocQBuf = 0xc044560f
-	// VidIocExpBuf is VIDIOC_EXPBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-expbuf.html).
+	// VidIocQBuf is VIDIOC_QBUF.
+	VidIocQBuf = 0xc058560f
+	// VidIocExpBuf is VIDIOC_EXPBUF.
 	VidIocExpBuf = 0xc0405610
-	// VidIocDQBuf is VIDIOC_DQBUF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-qbuf.html).
-	VidIocDQBuf = 0xc0445611
-	// VidIocStreamOn is VIDIOC_STREAMON (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-streamon.html).
+	// VidIocDQBuf is VIDIOC_DQBUF.
+	VidIocDQBuf = 0xc0585611
+	// VidIocStreamOn is VIDIOC_STREAMON.
 	VidIocStreamOn = 0x40045612
-	// VidIocStreamOff is VIDIOC_STREAMOFF (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-streamon.html).
+	// VidIocStreamOff is VIDIOC_STREAMOFF.
 	VidIocStreamOff = 0x40045613
-	// VidIocGParm is VIDIOC_G_PARM (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-parm.html).
+	// VidIocGParm is VIDIOC_G_PARM.
 	VidIocGParm = 0xc0cc5615
-	// VidIocSParm is VIDIOC_S_PARM (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-parm.html).
+	// VidIocSParm is VIDIOC_S_PARM.
 	VidIocSParm = 0xc0cc5616
-	// VidIocGStd is VIDIOC_G_STD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-std.html).
+	// VidIocGStd is VIDIOC_G_STD.
 	VidIocGStd = 0x80085617
-	// VidIocSStd is VIDIOC_S_STD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-std.html).
+	// VidIocSStd is VIDIOC_S_STD.
 	VidIocSStd = 0x40085618
-	// VidIocEnumStd is VIDIOC_ENUMSTD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumstd.html).
+	// VidIocEnumStd is VIDIOC_ENUMSTD.
 	VidIocEnumStd = 0xc0485619
-	// VidIocEnumInput is VIDIOC_ENUMINPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html).
+	// VidIocEnumInput is VIDIOC_ENUMINPUT.
 	VidIocEnumInput = 0xc050561a
-	// VidIocGCtrl is VIDIOC_G_CTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ctrl.html).
+	// VidIocGCtrl is VIDIOC_G_CTRL.
 	VidIocGCtrl = 0xc008561b
-	// VidIocSCtrl is VIDIOC_S_CTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ctrl.html).
+	// VidIocSCtrl is VIDIOC_S_CTRL.
 	VidIocSCtrl = 0xc008561c
-	// VidIocGTuner is VIDIOC_G_TUNER (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html).
+	// VidIocGTuner is VIDIOC_G_TUNER.
 	VidIocGTuner = 0xc054561d
-	// VidIocSTuner is VIDIOC_S_TUNER (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html).
+	// VidIocSTuner is VIDIOC_S_TUNER.
 	VidIocSTuner = 0x4054561e
-	// VidIocGAudio is VIDIOC_G_AUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html).
+	// VidIocGAudio is VIDIOC_G_AUDIO.
 	VidIocGAudio = 0x80345621
-	// VidIocSAudio is VIDIOC_S_AUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html).
+	// VidIocSAudio is VIDIOC_S_AUDIO.
 	VidIocSAudio = 0x40345622
-	// VidIocQueryCtrl is VIDIOC_QUERYCTRL (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-queryctrl.html).
+	// VidIocQueryCtrl is VIDIOC_QUERYCTRL.
 	VidIocQueryCtrl = 0xc0445624
-	// VidIocQueryMenu is VIDIOC_QUERYMENU (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-queryctrl.html)
+	// VidIocQueryMenu is VIDIOC_QUERYMENU.
 	VidIocQueryMenu = 0xc02c5625
-	// VidIocGInput is VIDIOC_G_INPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-input.html).
+	// VidIocGInput is VIDIOC_G_INPUT.
 	VidIocGInput = 0x80045626
-	// VidIocSInput is VIDIOC_S_INPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-input.html).
+	// VidIocSInput is VIDIOC_S_INPUT.
 	VidIocSInput = 0xc0045627
-	// VidIocGEDID is VIDIOC_G_EDID (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-edid.html).
+	// VidIocGEDID is VIDIOC_G_EDID.
 	VidIocGEDID = 0xc0285628
-	// VidIocSEDID is VIDIOC_S_EDID (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-edid.html).
+	// VidIocSEDID is VIDIOC_S_EDID.
 	VidIocSEDID = 0xc0285629
-	// VidIocGOutput is VIDIOC_G_OUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-output.html).
+	// VidIocGOutput is VIDIOC_G_OUTPUT.
 	VidIocGOutput = 0x8004562e
-	// VidIocSOutput is VIDIOC_S_OUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-output.html).
+	// VidIocSOutput is VIDIOC_S_OUTPUT.
 	VidIocSOutput = 0xc004562f
-	// VidIocEnumOutput is VIDIOC_ENUMOUTPUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html).
+	// VidIocEnumOutput is VIDIOC_ENUMOUTPUT.
 	VidIocEnumOutput = 0xc0485630
-	// VidIocGAudOut is VIDIOC_G_AUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audioout.html).
+	// VidIocGAudOut is VIDIOC_G_AUDOUT.
 	VidIocGAudOut = 0x80345631
-	// VidIocSAudOut is VIDIOC_S_AUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audioout.html).
+	// VidIocSAudOut is VIDIOC_S_AUDOUT.
 	VidIocSAudOut = 0x40345632
-	// VidIocGModulator is VIDIOC_G_MODULATOR (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html).
+	// VidIocGModulator is VIDIOC_G_MODULATOR.
 	VidIocGModulator = 0xc0445636
-	// VidIocSModulator is VIDIOC_S_MODULATOR (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html).
+	// VidIocSModulator is VIDIOC_S_MODULATOR.
 	VidIocSModulator = 0x40445637
-	// VidIocGFrequency is VIDIOC_G_FREQUENCY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-frequency.html).
+	// VidIocGFrequency is VIDIOC_G_FREQUENCY.
 	VidIocGFrequency = 0xc02c5638
-	// VidIocSFrequency is VIDIOC_S_FREQUENCY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-frequency.html).
+	// VidIocSFrequency is VIDIOC_S_FREQUENCY.
 	VidIocSFrequency = 0x402c5639
-	// VidIocCropCap is VIDIOC_CROPCAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-cropcap.html).
+	// VidIocCropCap is VIDIOC_CROPCAP.
 	VidIocCropCap = 0xc02c563a
-	// VidIocGCrop is VIDIOC_G_CROP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-crop.html).
+	// VidIocGCrop is VIDIOC_G_CROP.
 	VidIocGCrop = 0xc014563b
-	// VidIocSCrop is VIDIOC_S_CROP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-crop.html).
+	// VidIocSCrop is VIDIOC_S_CROP.
 	VidIocSCrop = 0x4014563c
-	// VidIocGJpegComp is VIDIOC_G_JPEGCOMP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-jpegcomp.html).
+	// VidIocGJpegComp is VIDIOC_G_JPEGCOMP.
 	VidIocGJpegComp = 0x808c563d
-	// VidIocSJpegComp is VIDIOC_S_JPEGCOMP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-jpegcomp.html).
+	// VidIocSJpegComp is VIDIOC_S_JPEGCOMP.
 	VidIocSJpegComp = 0x408c563e
-	// VidIocQueryStd is VIDIOC_QUERYSTD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querystd.html).
+	// VidIocQueryStd is VIDIOC_QUERYSTD.
 	VidIocQueryStd = 0x8008563f
-	// VidIocTryFmt is VIDIOC_TRY_FMT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html).
+	// VidIocTryFmt is VIDIOC_TRY_FMT.
 	VidIocTryFmt = 0xc0d05640
-	// VidIocEnumAudio is VIDIOC_ENUMAUDIO (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumaudio.html).
+	// VidIocEnumAudio is VIDIOC_ENUMAUDIO.
 	VidIocEnumAudio = 0xc0345641
-	// VidIocEnumAudOut is VIDIOC_ENUMAUDOUT (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumaudioout.html).
+	// VidIocEnumAudOut is VIDIOC_ENUMAUDOUT.
 	VidIocEnumAudOut = 0xc0345642
-	// VidIocGPriority is VIDIOC_G_PRIORITY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-priority.html).
+	// VidIocGPriority is VIDIOC_G_PRIORITY.
 	VidIocGPriority = 0x80045643
-	// VidIocSPriority is VIDIOC_S_PRIORITY (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-priority.html).
+	// VidIocSPriority is VIDIOC_S_PRIORITY.
 	VidIocSPriority = 0x40045644
-	// VidIocGSlicedVBICap is VIDIOC_G_SLICED_VBI_CAP (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-sliced-vbi-cap.html).
+	// VidIocGSlicedVBICap is VIDIOC_G_SLICED_VBI_CAP.
 	VidIocGSlicedVBICap = 0xc0745645
-	// VidIocLogStatus is VIDIOC_LOG_STATUS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-log-status.html).
+	// VidIocLogStatus is VIDIOC_LOG_STATUS.
 	VidIocLogStatus = 0x00005646
-	// VidIocGExtCtrls is VIDIOC_G_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	// VidIocGExtCtrls is VIDIOC_G_EXT_CTRLS.
 	VidIocGExtCtrls = 0xc0205647
-	// VidIocSExtCtrls is VIDIOC_S_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	// VidIocSExtCtrls is VIDIOC_S_EXT_CTRLS.
 	VidIocSExtCtrls = 0xc0205648
-	// VidIocTryExtCtrls is VIDIOC_TRY_EXT_CTRLS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-ext-ctrls.html).
+	// VidIocTryExtCtrls is VIDIOC_TRY_EXT_CTRLS.
 	VidIocTryExtCtrls = 0xc0205649
-	// VidIocEnumFrameSizes is VIDIOC_ENUM_FRAMESIZES (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html).
+	// VidIocEnumFrameSizes is VIDIOC_ENUM_FRAMESIZES.
 	VidIocEnumFrameSizes = 0xc02c564a
-	// VidIocEnumFrameIntervals is VIDIOC_ENUM_FRAMEINTERVALS (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-frameintervals.html).
+	// VidIocEnumFrameIntervals is VIDIOC_ENUM_FRAMEINTERVALS.
 	VidIocEnumFrameIntervals = 0xc034564b
-	// VidIocGEncIndex is VIDIOC_G_ENC_INDEX (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-enc-index.html).
+	// VidIocGEncIndex is VIDIOC_G_ENC_INDEX.
 	VidIocGEncIndex = 0x8818564c
-	// VidIocEncoderCmd is VIDIOC_ENCODER_CMD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-encoder-cmd.html).
+	// VidIocEncoderCmd is VIDIOC_ENCODER_CMD.
 	VidIocEncoderCmd = 0xc028564d
-	// VidIocTryEncoderCmd is VIDIOC_TRY_ENCODER_CMD (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-encoder-cmd.html).
+	// VidIocTryEncoderCmd is VIDIOC_TRY_ENCODER_CMD.
 	VidIocTryEncoderCmd = 0xc028564e
 )
 
@@ -613,7 +610,7 @@ type StdID uint64
 // TunerCap is the tuner capability type.
 type TunerCap uint32
 
-// The tuner capabilities (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-capability).
+// The tuner capabilities.
 const (
 	TunerCapLow TunerCap = 1 << iota
 	TunerCapNorm
@@ -634,7 +631,7 @@ const (
 // TunerMode is the tuner mode type.
 type TunerMode uint32
 
-// The tuner modes (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-audmode).
+// The tuner modes.
 const (
 	TunerModeMono TunerMode = iota
 	TunerModeStereo
@@ -647,7 +644,7 @@ const (
 // TunerSub is the tuner RX sub-channel type.
 type TunerSub uint32
 
-// The tuner RX sub-channel flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#tuner-rxsubchans).
+// The tuner RX sub-channel flags.
 const (
 	TunerSubMono TunerSub = 1 << iota
 	TunerSubStereo
@@ -660,7 +657,7 @@ const (
 // TunerType is the tuner type type.
 type TunerType uint32
 
-// The tuner types (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#c.v4l2_tuner_type).
+// The tuner types.
 const (
 	TunerTypeRadio TunerType = iota + 1
 	TunerTypeAnalogTV
@@ -672,7 +669,7 @@ const (
 // VBIFmtFlag is the VBI format flag type.
 type VBIFmtFlag uint32
 
-// VBI format flags (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-raw-vbi.html#vbifmt-flags).
+// VBI format flags.
 const (
 	VBIFmtFlagUnsync VBIFmtFlag = 1 << iota
 	VBIFmtFlagInterlaces
@@ -681,7 +678,7 @@ const (
 // XferFunc is the transfer function type.
 type XferFunc uint32
 
-// The transfer functions (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/colorspaces-defs.html#c.v4l2_xfer_func).
+// The transfer functions.
 const (
 	XferFuncDefault XferFunc = iota
 	XferFunc709
@@ -693,7 +690,7 @@ const (
 	XferFuncSMPTE2084
 )
 
-// Audio is v4l2_audio (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-audio.html#c.v4l2_audio).
+// Audio is v4l2_audio.
 type Audio struct {
 	Index      uint32
 	Name       [32]byte
@@ -702,7 +699,7 @@ type Audio struct {
 	Reserved   [2]uint32
 }
 
-// Buffer is v4l2_buffer (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_buffer).
+// Buffer is v4l2_buffer.
 type Buffer struct {
 	Index     uint32
 	Type      BufType
@@ -713,13 +710,13 @@ type Buffer struct {
 	Timecode  Timecode
 	Sequence  uint32
 	Memory    Memory
-	M         uint32 // Union - Note: might differ between 32-bit and 64-bit systems. Investigate.
+	M         uintptr
 	Length    uint32
 	Reserved2 uint32
 	RequestFD uint32
 }
 
-// Capability is v4l2_capability (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-querycap.html#c.v4l2_capability).
+// Capability is v4l2_capability.
 type Capability struct {
 	Driver       [16]byte
 	Card         [32]byte
@@ -730,13 +727,13 @@ type Capability struct {
 	Reserved     [3]uint32
 }
 
-// Clip is v4l2_clip (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_clip#c.v4l2_clip).
+// Clip is v4l2_clip.
 type Clip struct {
 	C    Rect
 	Next uintptr
 }
 
-// CtrlFwhtparams is v4l2_TODO
+// CtrlFwhtparams is v4l2_TODO.
 type CtrlFwhtparams struct {
 	BackwardRefTS uint64
 	Version       uint32
@@ -749,7 +746,7 @@ type CtrlFwhtparams struct {
 	Quantization  uint32
 }
 
-// CtrlH264DecodeParams is v4l2_TODO
+// CtrlH264DecodeParams is v4l2_TODO.
 type CtrlH264DecodeParams struct {
 	DPD                 [16]H264DPDEntry
 	NumSlices           uint16
@@ -759,7 +756,7 @@ type CtrlH264DecodeParams struct {
 	Flags               uint32
 }
 
-// CtrlHevcPps is v4l2_TODO
+// CtrlHevcPps is v4l2_TODO.
 type CtrlHevcPps struct {
 	NumExtraSliceHeaderBits      uint8
 	InitQpMinus26                int8
@@ -777,7 +774,7 @@ type CtrlHevcPps struct {
 	Flags                        uint64
 }
 
-// CtrlHevcSps is v4l2_TODO
+// CtrlHevcSps is v4l2_TODO.
 type CtrlHevcSps struct {
 	PicWidthInLumaSamples                uint16
 	PicHeightInLumaSamples               uint16
@@ -803,7 +800,7 @@ type CtrlHevcSps struct {
 	Flags                                uint64
 }
 
-// CtrlMpeg2Quantization is v4l2_TODO
+// CtrlMpeg2Quantization is v4l2_TODO.
 type CtrlMpeg2Quantization struct {
 	LoadIntraQuantiserMatrix          uint8
 	LoadNonIntraQuantiserMatrix       uint8
@@ -815,7 +812,7 @@ type CtrlMpeg2Quantization struct {
 	ChromaNonIntraQuantiserMatrix     [64]uint8
 }
 
-// CtrlMpeg2SliceParams is v4l2_TODO
+// CtrlMpeg2SliceParams is v4l2_TODO.
 type CtrlMpeg2SliceParams struct {
 	BitSize            uint32
 	DataBitOffset      uint32
@@ -825,7 +822,7 @@ type CtrlMpeg2SliceParams struct {
 	QuantiserScaleCode uint32
 }
 
-// CtrlVP8FrameHeader is v4l2_TODO
+// CtrlVP8FrameHeader is v4l2_TODO.
 type CtrlVP8FrameHeader struct {
 	SegmentHeader         VP8SegmentHeader
 	LoopfilterHeader      VP8LoopfilterHeader
@@ -851,7 +848,7 @@ type CtrlVP8FrameHeader struct {
 	Flags                 uint64
 }
 
-// FmtDesc is v4l2_fmtdesc (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-fmt.html#c.v4l2_fmtdesc).
+// FmtDesc is v4l2_fmtdesc.
 type FmtDesc struct {
 	Index       uint32
 	Type        BufType
@@ -861,19 +858,20 @@ type FmtDesc struct {
 	Reserved    [4]uint32
 }
 
-// Format is v4l2_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-fmt.html#c.v4l2_format).
+// Format is v4l2_format.
 type Format struct {
 	Type    BufType
-	RawData [256]byte // Union of several possible types.
+	_       uint32
+	RawData [200]byte // Union of several possible types.
 }
 
-// FrameSizeDiscrete is v4l2_framesize_discrete (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsize_discrete)).
+// FrameSizeDiscrete is v4l2_framesize_discrete.
 type FrameSizeDiscrete struct {
 	Width  uint32
 	Height uint32
 }
 
-// FrameSizeEnum is v4l2_framesizeenum (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsizeenum)).
+// FrameSizeEnum is v4l2_framesizeenum.
 type FrameSizeEnum struct {
 	Index     uint32
 	PixFormat PixFmt
@@ -882,7 +880,7 @@ type FrameSizeEnum struct {
 	Reserved  [2]uint32
 }
 
-// FrameSizeStepwise is v4l2_framesize_stepwise (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enum-framesizes.html#c.v4l2_frmsize_stepwise).
+// FrameSizeStepwise is v4l2_framesize_stepwise.
 type FrameSizeStepwise struct {
 	MinWidth   uint32
 	MaxWidth   uint32
@@ -892,7 +890,7 @@ type FrameSizeStepwise struct {
 	StepHeight uint32
 }
 
-// Frequency is v4l2_frequency (TODO).
+// Frequency is v4l2_frequency.
 type Frequency struct {
 	Tuner     uint32
 	Type      uint32
@@ -900,7 +898,7 @@ type Frequency struct {
 	Reserved  [4]uint32
 }
 
-// H264DPDEntry is v4l2_TODO
+// H264DPDEntry is v4l2_TODO.
 type H264DPDEntry struct {
 	ReferenceTS         uint64
 	FrameNum            uint16
@@ -910,14 +908,14 @@ type H264DPDEntry struct {
 	Flags               uint32
 }
 
-// H264PredWeightTable is v4l2_TODO
+// H264PredWeightTable is v4l2_TODO.
 type H264PredWeightTable struct {
 	LumaLog2WeightDenom   uint16
 	ChromaLog2WeightDenom uint16
 	Weightfactors         [2]H264WeightFactors
 }
 
-// H264WeightFactors is v4l2_TODO
+// H264WeightFactors is v4l2_TODO.
 type H264WeightFactors struct {
 	LumaWeight   [32]int16
 	LumaOffset   [32]int16
@@ -925,7 +923,7 @@ type H264WeightFactors struct {
 	ChromaOffset [32]int16
 }
 
-// Input is v4l2_input (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enuminput.html#c.v4l2_input).
+// Input is v4l2_input.
 type Input struct {
 	Index        uint32
 	Name         [32]byte
@@ -938,7 +936,7 @@ type Input struct {
 	Reserved     [3]uint32
 }
 
-// Modulator is v4l2_modulator (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-modulator.html#c.v4l2_modulator).
+// Modulator is v4l2_modulator.
 type Modulator struct {
 	Index      uint32
 	Name       [32]byte
@@ -950,7 +948,7 @@ type Modulator struct {
 	Reserved   [3]uint32
 }
 
-// Mpeg2Picture is v4l2_TODO
+// Mpeg2Picture is v4l2_TODO.
 type Mpeg2Picture struct {
 	PictureCodingType        uint8
 	FCode                    [2][2]uint8
@@ -966,7 +964,7 @@ type Mpeg2Picture struct {
 	ProgressiveFrame         uint16
 }
 
-// Mpeg2Sequence is v4l2_TODO
+// Mpeg2Sequence is v4l2_TODO.
 type Mpeg2Sequence struct {
 	HorizontalSize            uint16
 	VerticalSize              uint16
@@ -976,7 +974,7 @@ type Mpeg2Sequence struct {
 	ChromaFormat              uint8
 }
 
-// Output is v4l2_output (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-enumoutput.html#c.v4l2_output).
+// Output is v4l2_output.
 type Output struct {
 	Index        uint32
 	Name         [32]byte
@@ -988,7 +986,7 @@ type Output struct {
 	Reserved     [3]uint32
 }
 
-// PixFormat is v4l2_pix_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2.html#c.v4l2_pix_format).
+// PixFormat is v4l2_pix_format.
 type PixFormat struct {
 	Width        uint32
 	Height       uint32
@@ -1004,7 +1002,7 @@ type PixFormat struct {
 	XferFunc     XferFunc
 }
 
-// PixFormatMPlane is v4l2_pix_format_mplane (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2-mplane.html#c.v4l2_pix_format_mplane).
+// PixFormatMPlane is v4l2_pix_format_mplane.
 type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
@@ -1020,7 +1018,7 @@ type PixFormatMPlane struct {
 	Reserved     [7]uint8
 }
 
-// Plane is v4l2_plane (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html?highlight=v4l2_plane#c.v4l2_plane).
+// Plane is v4l2_plane.
 type Plane struct {
 	BytesUsed  uint32
 	Length     uint32
@@ -1029,7 +1027,7 @@ type Plane struct {
 	Reserved   [11]uint32
 }
 
-// PlanePixFormat is v4l2_plane_pix_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/pixfmt-v4l2-mplane.html#c.v4l2_plane_pix_format).
+// PlanePixFormat is v4l2_plane_pix_format.
 type PlanePixFormat struct {
 	SizeImage    uint32
 	BytesPerLine uint32
@@ -1075,7 +1073,7 @@ type QueryMenu struct {
 	Reserved uint32
 }
 
-// Rect is v4l2_rect (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html?highlight=v4l2_rect#c.v4l2_rect).
+// Rect is v4l2_rect.
 type Rect struct {
 	Left   int32
 	Top    int32
@@ -1083,7 +1081,7 @@ type Rect struct {
 	Height uint32
 }
 
-// RequestBuffers is v4l2_requestbuffers (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-reqbufs.html#c.v4l2_requestbuffers).
+// RequestBuffers is v4l2_requestbuffers.
 type RequestBuffers struct {
 	Count        uint32
 	Type         BufType
@@ -1092,7 +1090,7 @@ type RequestBuffers struct {
 	Reserved     [1]uint32
 }
 
-// SlicedVBIFormat is v4l2_sliced_vbi_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-sliced-vbi.html#c.v4l2_sliced_vbi_format).
+// SlicedVBIFormat is v4l2_sliced_vbi_format.
 type SlicedVBIFormat struct {
 	ServiceSet   uint32
 	ServiceLines [2][24]SlicedVBIService
@@ -1100,7 +1098,7 @@ type SlicedVBIFormat struct {
 	Reserved     [2]uint32
 }
 
-// Timecode is v4l2_timecode (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/buffer.html#c.v4l2_timecode).
+// Timecode is v4l2_timecode.
 type Timecode struct {
 	Type     TcType
 	Flags    TcFlag
@@ -1111,7 +1109,7 @@ type Timecode struct {
 	UserBits [4]uint8
 }
 
-// Tuner is v4l2_tuner (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/vidioc-g-tuner.html#c.v4l2_tuner).
+// Tuner is v4l2_tuner.
 type Tuner struct {
 	Index      uint32
 	Name       [32]byte
@@ -1126,7 +1124,7 @@ type Tuner struct {
 	Reserved   [4]uint32
 }
 
-// VBIFormat is v4l2_vbi_format (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-raw-vbi.html#c.v4l2_vbi_format).
+// VBIFormat is v4l2_vbi_format.
 type VBIFormat struct {
 	SamplingRate   uint32
 	Offset         uint32
@@ -1137,7 +1135,7 @@ type VBIFormat struct {
 	Reserved       uint32
 }
 
-// VP8EntropyCoderState is v4l2_TODO
+// VP8EntropyCoderState is v4l2_TODO.
 type VP8EntropyCoderState struct {
 	Range    uint8
 	Value    uint8
@@ -1145,7 +1143,7 @@ type VP8EntropyCoderState struct {
 	Padding  uint8
 }
 
-// VP8EntropyHeader is v4l2_TODO
+// VP8EntropyHeader is v4l2_TODO.
 type VP8EntropyHeader struct {
 	CoeffProbs  [4][8][3][11]uint8
 	YModeProbs  [4]uint8
@@ -1154,7 +1152,7 @@ type VP8EntropyHeader struct {
 	Padding     [3]uint8
 }
 
-// VP8LoopfilterHeader is v4l2_TODO
+// VP8LoopfilterHeader is v4l2_TODO.
 type VP8LoopfilterHeader struct {
 	RefFrmDelta    [4]int8
 	MBModeDelta    [4]int8
@@ -1163,7 +1161,7 @@ type VP8LoopfilterHeader struct {
 	Flags          uint32
 }
 
-// VP8QuantizationHeader is v4l2_TODO
+// VP8QuantizationHeader is v4l2_TODO.
 type VP8QuantizationHeader struct {
 	YACQi     uint8
 	YDCDelta  int8
@@ -1174,7 +1172,7 @@ type VP8QuantizationHeader struct {
 	Padding   uint16
 }
 
-// VP8SegmentHeader is v4l2_TODO
+// VP8SegmentHeader is v4l2_TODO.
 type VP8SegmentHeader struct {
 	QuantUpdate  [4]int8
 	LFUpdate     [4]int8
@@ -1183,7 +1181,7 @@ type VP8SegmentHeader struct {
 	Flags        uint32
 }
 
-// Window is v4l2_window (https://www.linuxtv.org/downloads/v4l-dvb-apis-new/uapi/v4l/dev-overlay.html#c.v4l2_window).
+// Window is v4l2_window.
 type Window struct {
 	W           Rect
 	Field       Field
@@ -1197,7 +1195,7 @@ type Window struct {
 // QueryCapabilities queries the device capabilities.
 func QueryCapabilities(fd int) (*Capability, error) {
 	capability := &Capability{}
-	if err := Ioctl(fd, VidIocQueryCap, uintptr(unsafe.Pointer(capability))); err != nil {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocQueryCap), uintptr(unsafe.Pointer(capability))); err != 0 {
 		return nil, err
 	}
 	return capability, nil
@@ -1211,8 +1209,8 @@ func EnumFormats(fd int, bufType BufType) ([]*FmtDesc, error) {
 		fmtDesc := &FmtDesc{}
 		fmtDesc.Index = index
 		fmtDesc.Type = bufType
-		err := Ioctl(fd, VidIocEnumFmt, uintptr(unsafe.Pointer(fmtDesc)))
-		if err != nil {
+		_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocEnumFmt), uintptr(unsafe.Pointer(fmtDesc)))
+		if err != 0 {
 			if err == syscall.EINVAL {
 				break
 			}
@@ -1232,8 +1230,8 @@ func EnumFrameSizes(fd int, pixFormat PixFmt) ([]*FrameSizeEnum, error) {
 		frameSizeEnum := &FrameSizeEnum{}
 		frameSizeEnum.Index = index
 		frameSizeEnum.PixFormat = pixFormat
-		err := Ioctl(fd, VidIocEnumFrameSizes, uintptr(unsafe.Pointer(frameSizeEnum)))
-		if err != nil {
+		_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocEnumFrameSizes), uintptr(unsafe.Pointer(frameSizeEnum)))
+		if err != 0 {
 			if err == syscall.EINVAL {
 				break
 			}
@@ -1245,6 +1243,16 @@ func EnumFrameSizes(fd int, pixFormat PixFmt) ([]*FrameSizeEnum, error) {
 	return frameSizeEnums, nil
 }
 
+// GetFormat returns the current format.
+func GetFormat(fd int, bufType BufType) (*Format, error) {
+	format := &Format{}
+	format.Type = bufType
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocGFmt), uintptr(unsafe.Pointer(format))); err != 0 {
+		return nil, err
+	}
+	return format, nil
+}
+
 // SetFormat sets the format and frame size.
 func SetFormat(fd int, bufType BufType, pixFormat PixFmt, width uint32, height uint32) (uint32, uint32, error) {
 	format := &Format{}
@@ -1254,7 +1262,7 @@ func SetFormat(fd int, bufType BufType, pixFormat PixFmt, width uint32, height u
 	pix.Height = height
 	pix.PixFormat = pixFormat
 	pix.Field = FieldNone
-	if err := Ioctl(fd, VidIocSFmt, uintptr(unsafe.Pointer(format))); err != nil {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocSFmt), uintptr(unsafe.Pointer(format))); err != 0 {
 		return 0, 0, err
 	}
 	return pix.Width, pix.Height, nil
@@ -1266,7 +1274,7 @@ func RequestDriverBuffers(fd int, count uint32, bufType BufType, memory Memory) 
 	requestBuffers.Count = count
 	requestBuffers.Type = bufType
 	requestBuffers.Memory = memory
-	if err := Ioctl(fd, VidIocReqBufs, uintptr(unsafe.Pointer(requestBuffers))); err != nil {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocReqBufs), uintptr(unsafe.Pointer(requestBuffers))); err != 0 {
 		return 0, err
 	}
 	return requestBuffers.Count, nil
@@ -1278,7 +1286,7 @@ func QueryBuffer(fd int, index uint32, bufType BufType, memory Memory) (*Buffer,
 	buffer.Index = index
 	buffer.Type = bufType
 	buffer.Memory = memory
-	if err := Ioctl(fd, VidIocQueryBuf, uintptr(unsafe.Pointer(buffer))); err != nil {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocQueryBuf), uintptr(unsafe.Pointer(buffer))); err != 0 {
 		return nil, err
 	}
 	return buffer, nil
@@ -1286,7 +1294,10 @@ func QueryBuffer(fd int, index uint32, bufType BufType, memory Memory) (*Buffer,
 
 // EnqueueBuffer enqueues a buffer.
 func EnqueueBuffer(fd int, buffer *Buffer) error {
-	return Ioctl(fd, VidIocQBuf, uintptr(unsafe.Pointer(buffer)))
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocQBuf), uintptr(unsafe.Pointer(buffer))); err != 0 {
+		return err
+	}
+	return nil
 }
 
 // DequeueBuffer dequeues a buffer.
@@ -1294,7 +1305,7 @@ func DequeueBuffer(fd int, bufType BufType, memory Memory) (*Buffer, error) {
 	buffer := &Buffer{}
 	buffer.Type = bufType
 	buffer.Memory = memory
-	if err := Ioctl(fd, VidIocDQBuf, uintptr(unsafe.Pointer(buffer))); err != nil {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocDQBuf), uintptr(unsafe.Pointer(buffer))); err != 0 {
 		return nil, err
 	}
 	return buffer, nil
@@ -1302,17 +1313,29 @@ func DequeueBuffer(fd int, bufType BufType, memory Memory) (*Buffer, error) {
 
 // StreamOn turns on streaming for the specified buffer type.
 func StreamOn(fd int, bufType BufType) error {
-	return Ioctl(fd, VidIocStreamOn, uintptr(unsafe.Pointer(&bufType)))
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocStreamOn), uintptr(unsafe.Pointer(&bufType))); err != 0 {
+		return err
+	}
+	return nil
 }
 
 // StreamOff turns off streaming for the specified buffer type.
 func StreamOff(fd int, bufType BufType) error {
-	return Ioctl(fd, VidIocStreamOff, uintptr(unsafe.Pointer(&bufType)))
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocStreamOff), uintptr(unsafe.Pointer(&bufType))); err != 0 {
+		return err
+	}
+	return nil
 }
 
 // GrabFrame grabs a single frame.
 func GrabFrame(fd int, bufType BufType, memory Memory, buffers [][]byte) ([]byte, error) {
-	if err := WaitFd(fd); err != nil {
+	fdSet := &syscall.FdSet{}
+	fdSet.Bits[fd/32] |= 1 << (uint(fd) % 32)
+	timeout := &syscall.Timeval{
+		Sec:  2,
+		Usec: 0,
+	}
+	if _, err := syscall.Select(fd+1, fdSet, nil, nil, timeout); err != nil {
 		return nil, err
 	}
 	buffer, err := DequeueBuffer(fd, bufType, memory)

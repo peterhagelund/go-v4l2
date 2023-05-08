@@ -1,3 +1,23 @@
+// Copyright (c) 2020-2023 Peter Hagelund
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 package v4l2
 
 import (
@@ -113,6 +133,25 @@ func TestEnumFrameSizes(t *testing.T) {
 	}
 }
 
+func TestGetFormat(t *testing.T) {
+	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
+	if err != nil {
+		t.Fatal("unable to open device")
+	}
+	defer unix.Close(fd)
+	format, err := GetFormat(fd, BufTypeVideoCapture)
+	if err != nil {
+		t.Fatal("unable to get format")
+	}
+	pix := (*PixFormat)(unsafe.Pointer(&format.RawData[0]))
+	if pix.Width == 0 {
+		t.Fatal("zero width returned")
+	}
+	if pix.Height == 0 {
+		t.Fatal("zero height returned")
+	}
+}
+
 func TestSetFormat(t *testing.T) {
 	fd, err := unix.Open("/dev/video0", unix.O_RDWR, 0)
 	if err != nil {
@@ -123,11 +162,11 @@ func TestSetFormat(t *testing.T) {
 	if err != nil {
 		t.Fatal("unable to set format")
 	}
-	if width == 0 {
-		t.Fatal("zero width returned")
+	if width != 1024 {
+		t.Fatal("incorrect width returned")
 	}
-	if height == 0 {
-		t.Fatal("zero height returned")
+	if height != 768 {
+		t.Fatal("incorrect height returned")
 	}
 }
 

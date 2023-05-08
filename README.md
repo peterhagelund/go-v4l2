@@ -4,7 +4,7 @@ V4L2 definitions for Go.
 
 ## Copyright and Licensing
 
-Copyright (c) 2020 Peter Hagelund
+Copyright (c) 2020-2023 Peter Hagelund
 
 This software is licensed under the [MIT License](https://en.wikipedia.org/wiki/MIT_License)
 
@@ -21,7 +21,7 @@ go get -u github.com/peterhagelund/go-v4l2
 In `go.mod`:
 
 ```
-require "github.com/peterhagelund/go-v4l2" v0.2.6
+require "github.com/peterhagelund/go-v4l2/pkg/v4l2" v0.3.0
 ```
 
 ## Using
@@ -136,12 +136,12 @@ if err != nil {
 }
 ```
 
-On a Raspberry Pi model 3B, output would be:
+On a Raspberry Pi model 4 running 64-bit Bullseye _with legacy camera support enabled_, output would be:
 
 ```
-Driver....: bm2835 mmal
+Driver....: bcm2835 mmal
 Card......: mmal service 16.1
-BusInfo...: platform:bcm2835-v4l2
+BusInfo...: platform:bcm2835_v4l2-0
 Formats:
         Format...: Planar YUV 4:2:0
         Format...: YUYV 4:2:2
@@ -152,18 +152,18 @@ Formats:
         Format...: YVYU 4:2:2
         Format...: VYUY 4:2:2
         Format...: UYVY 4:2:2
-        Format...: Y/CbCr 4:2:0
+        Format...: Y/UV 4:2:0
         Format...: 24-bit BGR 8-8-8
         Format...: Planar YVU 4:2:0
-        Format...: Y/CrCb 4:2:0
-        Format...: 32-bit BGRA/X 8-8-8-8
+        Format...: Y/VU 4:2:0
+        Format...: 32-bit XBGR 8-8-8-8
 Frame sizes for JPEG:
         Stepwise:
                 MinWidth.....: 32
-                MaxWidth.....: 3280
+                MaxWidth.....: 2592
                 StepWidth....: 2
                 MinHeight....: 32
-                MaxHeight....: 2464
+                MaxHeight....: 1944
                 StepHeight...: 2
 Frame size:
         Width....: 1024
@@ -172,11 +172,10 @@ Driver buffer count...: 4
 Image:
         Name.....: jpeg
         Width....: 1024
-        Height...: 768
-```
+        Height...: 768```
 
 ```bash
 ls -l *.jpeg
--rw-r--r-- 1 pi pi 270690 Apr  9 08:39 test1.jpeg
--rw-r--r-- 1 pi pi  61599 Apr  9 08:39 test2.jpeg
+.rw-r--r-- 302k pi  8 May  8:41 test1.jpeg
+.rw-r--r--  61k pi  8 May  8:41 test2.jpeg
 ```
