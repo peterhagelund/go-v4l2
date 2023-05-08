@@ -21,7 +21,7 @@ go get -u github.com/peterhagelund/go-v4l2
 In `go.mod`:
 
 ```
-require "github.com/peterhagelund/go-v4l2/pkg/v4l2" v0.3.0
+require "github.com/peterhagelund/go-v4l2/pkg/v4l2" v0.5.0
 ```
 
 ## Using
