@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Peter Hagelund
+// Copyright (c) 2020-2024 Peter Hagelund
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import (
 	"os"
 	"unsafe"
 
-	"github.com/peterhagelund/go-v4l2/pkg/v4l2"
+	"github.com/peterhagelund/go-v4l2/v4l2"
 	"golang.org/x/sys/unix"
 )
 

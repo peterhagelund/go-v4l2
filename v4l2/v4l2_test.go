@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Peter Hagelund
+// Copyright (c) 2020-2024 Peter Hagelund
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -80,7 +80,7 @@ func TestEnumFormats(t *testing.T) {
 	found := false
 	for _, fmtDesc := range fmtDescs {
 		description := BytesToString(fmtDesc.Description[:])
-		if description == "JFIF JPEG" {
+		if description == "Motion-JPEG" {
 			found = true
 			break
 		}
@@ -96,7 +96,7 @@ func TestEnumFrameSizes(t *testing.T) {
 		t.Fatal("unable to open device")
 	}
 	defer unix.Close(fd)
-	frameSizeEnums, err := EnumFrameSizes(fd, PixFmtJPEG)
+	frameSizeEnums, err := EnumFrameSizes(fd, PixFmtMJPEG)
 	if err != nil {
 		t.Fatal("unable to enumerate frame sizes")
 	}
