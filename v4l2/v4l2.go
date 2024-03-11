@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2023 Peter Hagelund
+// Copyright (c) 2020-2024 Peter Hagelund
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
 package v4l2
 
 import (
+	"bytes"
 	"syscall"
 	"unsafe"
 
@@ -291,7 +292,6 @@ const (
 type PixFmt uint32
 
 // Pixel formats.
-// Absent macros in Go and given consts must be compile-time constants, all values are coded with "|" and "<<".
 const (
 	PixFmtRGB332         PixFmt = 'R' | 'G'<<8 | 'B'<<16 | '1'<<24
 	PixFmtARGB444        PixFmt = 'A' | 'R'<<8 | '1'<<16 | '2'<<24
@@ -475,133 +475,435 @@ const (
 	TcType60Fps
 )
 
+// CtrlType is the control type type.
+type CtrlType uint32
+
+// The control types.
 const (
-	// VidIocQueryCap is VIDIOC_QUERYCAP.
-	VidIocQueryCap uint32 = 0x80685600
-	// VidIocReserved is VIDIOC_RESERVED.
-	VidIocReserved = 0x00005601
-	// VidIocEnumFmt is VIDIOC_ENUM_FMT.
-	VidIocEnumFmt = 0xc0405602
-	// VidIocGFmt is VIDIOC_G_FMT.
-	VidIocGFmt = 0xc0d05604
-	// VidIocSFmt is VIDIOC_S_FMT.
-	VidIocSFmt = 0xc0d05605
-	// VidIocReqBufs is VIDIOC_REQBUFS.
-	VidIocReqBufs = 0xc0145608
-	// VidIocQueryBuf is VIDIOC_QUERYBUF.
-	VidIocQueryBuf = 0xc0585609
-	// VidIocGFBuf is VIDIOC_G_FBUF.
-	VidIocGFBuf = 0x8030560a
-	// VidIocSFBuf is VIDIOC_S_FBUF.
-	VidIocSFBuf = 0x4030560b
-	// VidIocOverlay is VIDIOC_OVERLAY.
-	VidIocOverlay = 0x4004560e
-	// VidIocQBuf is VIDIOC_QBUF.
-	VidIocQBuf = 0xc058560f
-	// VidIocExpBuf is VIDIOC_EXPBUF.
-	VidIocExpBuf = 0xc0405610
-	// VidIocDQBuf is VIDIOC_DQBUF.
-	VidIocDQBuf = 0xc0585611
-	// VidIocStreamOn is VIDIOC_STREAMON.
-	VidIocStreamOn = 0x40045612
-	// VidIocStreamOff is VIDIOC_STREAMOFF.
-	VidIocStreamOff = 0x40045613
-	// VidIocGParm is VIDIOC_G_PARM.
-	VidIocGParm = 0xc0cc5615
-	// VidIocSParm is VIDIOC_S_PARM.
-	VidIocSParm = 0xc0cc5616
-	// VidIocGStd is VIDIOC_G_STD.
-	VidIocGStd = 0x80085617
-	// VidIocSStd is VIDIOC_S_STD.
-	VidIocSStd = 0x40085618
-	// VidIocEnumStd is VIDIOC_ENUMSTD.
-	VidIocEnumStd = 0xc0485619
-	// VidIocEnumInput is VIDIOC_ENUMINPUT.
-	VidIocEnumInput = 0xc050561a
-	// VidIocGCtrl is VIDIOC_G_CTRL.
-	VidIocGCtrl = 0xc008561b
-	// VidIocSCtrl is VIDIOC_S_CTRL.
-	VidIocSCtrl = 0xc008561c
-	// VidIocGTuner is VIDIOC_G_TUNER.
-	VidIocGTuner = 0xc054561d
-	// VidIocSTuner is VIDIOC_S_TUNER.
-	VidIocSTuner = 0x4054561e
-	// VidIocGAudio is VIDIOC_G_AUDIO.
-	VidIocGAudio = 0x80345621
-	// VidIocSAudio is VIDIOC_S_AUDIO.
-	VidIocSAudio = 0x40345622
-	// VidIocQueryCtrl is VIDIOC_QUERYCTRL.
-	VidIocQueryCtrl = 0xc0445624
-	// VidIocQueryMenu is VIDIOC_QUERYMENU.
-	VidIocQueryMenu = 0xc02c5625
-	// VidIocGInput is VIDIOC_G_INPUT.
-	VidIocGInput = 0x80045626
-	// VidIocSInput is VIDIOC_S_INPUT.
-	VidIocSInput = 0xc0045627
-	// VidIocGEDID is VIDIOC_G_EDID.
-	VidIocGEDID = 0xc0285628
-	// VidIocSEDID is VIDIOC_S_EDID.
-	VidIocSEDID = 0xc0285629
-	// VidIocGOutput is VIDIOC_G_OUTPUT.
-	VidIocGOutput = 0x8004562e
-	// VidIocSOutput is VIDIOC_S_OUTPUT.
-	VidIocSOutput = 0xc004562f
-	// VidIocEnumOutput is VIDIOC_ENUMOUTPUT.
-	VidIocEnumOutput = 0xc0485630
-	// VidIocGAudOut is VIDIOC_G_AUDOUT.
-	VidIocGAudOut = 0x80345631
-	// VidIocSAudOut is VIDIOC_S_AUDOUT.
-	VidIocSAudOut = 0x40345632
-	// VidIocGModulator is VIDIOC_G_MODULATOR.
-	VidIocGModulator = 0xc0445636
-	// VidIocSModulator is VIDIOC_S_MODULATOR.
-	VidIocSModulator = 0x40445637
-	// VidIocGFrequency is VIDIOC_G_FREQUENCY.
-	VidIocGFrequency = 0xc02c5638
-	// VidIocSFrequency is VIDIOC_S_FREQUENCY.
-	VidIocSFrequency = 0x402c5639
-	// VidIocCropCap is VIDIOC_CROPCAP.
-	VidIocCropCap = 0xc02c563a
-	// VidIocGCrop is VIDIOC_G_CROP.
-	VidIocGCrop = 0xc014563b
-	// VidIocSCrop is VIDIOC_S_CROP.
-	VidIocSCrop = 0x4014563c
-	// VidIocGJpegComp is VIDIOC_G_JPEGCOMP.
-	VidIocGJpegComp = 0x808c563d
-	// VidIocSJpegComp is VIDIOC_S_JPEGCOMP.
-	VidIocSJpegComp = 0x408c563e
-	// VidIocQueryStd is VIDIOC_QUERYSTD.
-	VidIocQueryStd = 0x8008563f
-	// VidIocTryFmt is VIDIOC_TRY_FMT.
-	VidIocTryFmt = 0xc0d05640
-	// VidIocEnumAudio is VIDIOC_ENUMAUDIO.
-	VidIocEnumAudio = 0xc0345641
-	// VidIocEnumAudOut is VIDIOC_ENUMAUDOUT.
-	VidIocEnumAudOut = 0xc0345642
-	// VidIocGPriority is VIDIOC_G_PRIORITY.
-	VidIocGPriority = 0x80045643
-	// VidIocSPriority is VIDIOC_S_PRIORITY.
-	VidIocSPriority = 0x40045644
-	// VidIocGSlicedVBICap is VIDIOC_G_SLICED_VBI_CAP.
-	VidIocGSlicedVBICap = 0xc0745645
-	// VidIocLogStatus is VIDIOC_LOG_STATUS.
-	VidIocLogStatus = 0x00005646
-	// VidIocGExtCtrls is VIDIOC_G_EXT_CTRLS.
-	VidIocGExtCtrls = 0xc0205647
-	// VidIocSExtCtrls is VIDIOC_S_EXT_CTRLS.
-	VidIocSExtCtrls = 0xc0205648
-	// VidIocTryExtCtrls is VIDIOC_TRY_EXT_CTRLS.
-	VidIocTryExtCtrls = 0xc0205649
-	// VidIocEnumFrameSizes is VIDIOC_ENUM_FRAMESIZES.
-	VidIocEnumFrameSizes = 0xc02c564a
-	// VidIocEnumFrameIntervals is VIDIOC_ENUM_FRAMEINTERVALS.
-	VidIocEnumFrameIntervals = 0xc034564b
-	// VidIocGEncIndex is VIDIOC_G_ENC_INDEX.
-	VidIocGEncIndex = 0x8818564c
-	// VidIocEncoderCmd is VIDIOC_ENCODER_CMD.
-	VidIocEncoderCmd = 0xc028564d
-	// VidIocTryEncoderCmd is VIDIOC_TRY_ENCODER_CMD.
-	VidIocTryEncoderCmd = 0xc028564e
+	CtrlTypeInteger               CtrlType = 1
+	CtrlTypeBoolean               CtrlType = 2
+	CtrlTypeMenu                  CtrlType = 3
+	CtrlTypeButton                CtrlType = 4
+	CtrlTypeInteger64             CtrlType = 5
+	CtrlTypeCtrlClass             CtrlType = 6
+	CtrlTypeString                CtrlType = 7
+	CtrlTypeBitMask               CtrlType = 8
+	CtrlTypeIntegerMenu           CtrlType = 9
+	CtrlCompundTypes              CtrlType = 0x0100
+	CtrlTypeU8                    CtrlType = 0x0100
+	CtrlTypeU16                   CtrlType = 0x0101
+	CtrlTypeU32                   CtrlType = 0x0102
+	CtrlTypeArea                  CtrlType = 0x0106
+	CtrlTypeHdr10CllInfo          CtrlType = 0x0110
+	CtrlTypeHdr10MasteringDisplay CtrlType = 0x0111
+	CtrlTypeH264SPS               CtrlType = 0x0200
+	CtrlTypeH264PPS               CtrlType = 0x0201
+	CtrlTypeH264ScalingMatrix     CtrlType = 0x0202
+	CtrlTypeH264SliceParams       CtrlType = 0x0203
+	CtrlTypeH264DecordeParams     CtrlType = 0x0204
+	CtrlTypeH264PredWeights       CtrlType = 0x0205
+	CtrlTypeFwhtParams            CtrlType = 0x0220
+	CtrlTypeVP8Frame              CtrlType = 0x0240
+	CtrlTypeMPEG2Quatisation      CtrlType = 0x0250
+	CtrlTypeMPEG2Sequence         CtrlType = 0x0251
+	CtrlTypeMPEG2Picture          CtrlType = 0x0252
+)
+
+// CtrlType is the control flag type.
+type CtrlFlag uint32
+
+// The control flags.
+const (
+	CtrlFlagDisable        CtrlFlag = 0x0001
+	CtrlFlagGrabbed        CtrlFlag = 0x0002
+	CtrlFlagReadOnly       CtrlFlag = 0x0004
+	CtrlFlagUpdate         CtrlFlag = 0x0008
+	CtrlFlagInactive       CtrlFlag = 0x0010
+	CtrlFlagSlider         CtrlFlag = 0x0020
+	CtrlFlagWriteOnly      CtrlFlag = 0x0040
+	CtrlFlagVolatile       CtrlFlag = 0x0080
+	CtrlFlagHasPayload     CtrlFlag = 0x0100
+	CtrlFlagExecuteOnWrite CtrlFlag = 0x0200
+	CtrlFlagModifyLayout   CtrlFlag = 0x0400
+	CtrlFlagNextCtrl       CtrlFlag = 0x80000000
+	CtrlFlagNextCompound   CtrlFlag = 0x40000000
+	CidMaxCtrls            CtrlFlag = 1024
+	CidPrivateBase         CtrlFlag = 0x08000000
+)
+
+// CtrlClass is the control class type.
+type CtrlClass uint32
+
+// The control classes.
+const (
+	CtrlClassUser        CtrlClass = 0x00980000
+	CtrlClassCodec       CtrlClass = 0x00990000
+	CtrlClassCamera      CtrlClass = 0x009a0000
+	CtrlClassFMTX        CtrlClass = 0x009b0000
+	CtrlClassFlash       CtrlClass = 0x009c0000
+	CtrlClassJPEG        CtrlClass = 0x009d0000
+	CtrlClassImageSource CtrlClass = 0x009e0000
+	CtrlClassImageProc   CtrlClass = 0x009f0000
+	CtrlClassDV          CtrlClass = 0x00a00000
+	CtrlClassFMRX        CtrlClass = 0x00a10000
+	CtrlClassRFTuner     CtrlClass = 0x00a20000
+	CtrlClassDetect      CtrlClass = 0x00a30000
+	CtrlClassColorimetry CtrlClass = 0x00a50000
+)
+
+// CtrlID is the control ID type.
+type CtrlID uint32
+
+// The control IDs.
+const (
+	CidBase                                           CtrlID = CtrlID(CtrlClassUser | 0x900)
+	CidUserBase                                       CtrlID = CidBase
+	CidUserClass                                      CtrlID = CtrlID(CtrlClassUser | 1)
+	CidBrightness                                     CtrlID = CidBase + 0
+	CidContrast                                       CtrlID = CidBase + 1
+	CidSaturation                                     CtrlID = CidBase + 2
+	CidHue                                            CtrlID = CidBase + 3
+	CidAudioVolume                                    CtrlID = CidBase + 5
+	CidAudioBalance                                   CtrlID = CidBase + 6
+	CidAudioBass                                      CtrlID = CidBase + 7
+	CidAudioTreble                                    CtrlID = CidBase + 8
+	CidAudioMute                                      CtrlID = CidBase + 9
+	CidAudioLoudness                                  CtrlID = CidBase + 10
+	CidBlackLevel                                     CtrlID = CidBase + 11
+	CidAutoWhiteBalance                               CtrlID = CidBase + 12
+	CidDoWhiteBalance                                 CtrlID = CidBase + 13
+	CidRedBalance                                     CtrlID = CidBase + 14
+	CidBlueBalance                                    CtrlID = CidBase + 15
+	CidGamma                                          CtrlID = CidBase + 16
+	CidWhiteness                                      CtrlID = CidGamma
+	CidExposure                                       CtrlID = CidBase + 17
+	CidAutogain                                       CtrlID = CidBase + 18
+	CidGain                                           CtrlID = CidBase + 19
+	CidHFlip                                          CtrlID = CidBase + 20
+	CidVFlip                                          CtrlID = CidBase + 21
+	CidPowerLineFrequency                             CtrlID = CidBase + 24
+	CidHueAuto                                        CtrlID = CidBase + 25
+	CidWhiteBalanceTemperature                        CtrlID = CidBase + 26
+	CidSharpness                                      CtrlID = CidBase + 27
+	CidBacklightCompensation                          CtrlID = CidBase + 28
+	CidChromaAgc                                      CtrlID = CidBase + 29
+	CidColorKiller                                    CtrlID = CidBase + 30
+	CidColorFX                                        CtrlID = CidBase + 31
+	CidAutobrightness                                 CtrlID = CidBase + 32
+	CidBandStopFilter                                 CtrlID = CidBase + 33
+	CidRotate                                         CtrlID = CidBase + 34
+	CidBgColor                                        CtrlID = CidBase + 35
+	CidChromaGain                                     CtrlID = CidBase + 36
+	CidIlluminators1                                  CtrlID = CidBase + 37
+	CidIlluminators2                                  CtrlID = CidBase + 38
+	CidMinBuffersForCapture                           CtrlID = CidBase + 39
+	CidMinBuffersForOutput                            CtrlID = CidBase + 40
+	CidAlphaComponent                                 CtrlID = CidBase + 41
+	CidColorrFXCBCR                                   CtrlID = CidBase + 42
+	CidLastP1                                         CtrlID = CidBase + 43
+	CidUserMEYEBase                                   CtrlID = CidUserBase + 0x1000
+	CidUserBTTVBase                                   CtrlID = CidUserBase + 0x1010
+	CidUserS2255Base                                  CtrlID = CidUserBase + 0x1030
+	CidUserSI476XBase                                 CtrlID = CidUserBase + 0x1040
+	CidUserTIVPEBase                                  CtrlID = CidUserBase + 0x1050
+	CidUserSAA7134Base                                CtrlID = CidUserBase + 0x1060
+	CidUserADV7180Base                                CtrlID = CidUserBase + 0x1070
+	CidUserTC358743Base                               CtrlID = CidUserBase + 0x1080
+	CidUserMAX217XBase                                CtrlID = CidUserBase + 0x1090
+	CidUserIMXBase                                    CtrlID = CidUserBase + 0x10b0
+	CidUserAtmelISCBase                               CtrlID = CidUserBase + 0x10c0
+	CidUserCODABase                                   CtrlID = CidUserBase + 0x10e0
+	CidUserCCSBase                                    CtrlID = CidUserBase + 0x10f0
+	CidCodecBase                                      CtrlID = CtrlID(CtrlClassCodec | 0x900)
+	CidCodecClass                                     CtrlID = CtrlID(CtrlClassCodec | 1)
+	CidMPEGStreamType                                 CtrlID = CidCodecBase + 0
+	CidMPEGStreamPidPmt                               CtrlID = CidCodecBase + 1
+	CidMPEGStreamPidAudio                             CtrlID = CidCodecBase + 2
+	CidMPEGStreamPidVideo                             CtrlID = CidCodecBase + 3
+	CidMPEGStreamPidPCR                               CtrlID = CidCodecBase + 4
+	CidMPEGStreamPesIDAudio                           CtrlID = CidCodecBase + 5
+	CidMPEGStreamPesIDVideo                           CtrlID = CidCodecBase + 6
+	CidMPEGStreamVBIFmt                               CtrlID = CidCodecBase + 7
+	CidMPEGAudioSamplingFreq                          CtrlID = CidCodecBase + 100
+	CidMPEGAudioEnCoding                              CtrlID = CidCodecBase + 101
+	CidMPEGAudioL1Bitrate                             CtrlID = CidCodecBase + 102
+	CidMPEGAudioL2Bitrate                             CtrlID = CidCodecBase + 103
+	CidMPEGAudioL3Bitrate                             CtrlID = CidCodecBase + 104
+	CidMPEGAudioMode                                  CtrlID = CidCodecBase + 105
+	CidMPEGAudioModeExtension                         CtrlID = CidCodecBase + 106
+	CidMPEGAudioEmphasis                              CtrlID = CidCodecBase + 107
+	CidMPEGAudioCRC                                   CtrlID = CidCodecBase + 108
+	CidMPEGAudioMute                                  CtrlID = CidCodecBase + 109
+	CidMPEGAudioAACBitrate                            CtrlID = CidCodecBase + 110
+	CidMPEGAudioAC3Bitrate                            CtrlID = CidCodecBase + 111
+	CidMPEGAudioDecPlayback                           CtrlID = CidCodecBase + 112
+	CidMPEGAudioDecMultilingualPlayback               CtrlID = CidCodecBase + 113
+	CidMPEGVideoEnCoding                              CtrlID = CidCodecBase + 200
+	CidMPEGVideoAspect                                CtrlID = CidCodecBase + 201
+	CidMPEGVideoBFrames                               CtrlID = CidCodecBase + 202
+	CidMPEGVideoGOPSize                               CtrlID = CidCodecBase + 203
+	CidMPEGVideoGOPClosure                            CtrlID = CidCodecBase + 204
+	CidMPEGVideoPulldown                              CtrlID = CidCodecBase + 205
+	CidMPEGVideoBitrateMode                           CtrlID = CidCodecBase + 206
+	CidMPEGVideoBitrate                               CtrlID = CidCodecBase + 207
+	CidMPEGVideoBitratePeak                           CtrlID = CidCodecBase + 208
+	CidMPEGVideoTemporalDecimation                    CtrlID = CidCodecBase + 209
+	CidMPEGVideoMute                                  CtrlID = CidCodecBase + 210
+	CidMPEGVideoMuteYUV                               CtrlID = CidCodecBase + 211
+	CidMPEGVideoDecoderSliceInterface                 CtrlID = CidCodecBase + 212
+	CidMPEGVideoDecoderMPEG4DeblockFilter             CtrlID = CidCodecBase + 213
+	CidMPEGVideoCyclicIntraRefreshMB                  CtrlID = CidCodecBase + 214
+	CidMPEGVideoFeameRCEnable                         CtrlID = CidCodecBase + 215
+	CidMPEGVideoHeaderMode                            CtrlID = CidCodecBase + 216
+	CidMPEGVideoMaxRefPic                             CtrlID = CidCodecBase + 217
+	CidMPEGVideoMBRCEnable                            CtrlID = CidCodecBase + 218
+	CidMPEGVideoMultiSliceMaxBytes                    CtrlID = CidCodecBase + 219
+	CidMPEGVideoMultiSliceMaxMB                       CtrlID = CidCodecBase + 220
+	CidMPEGVideoMultiSliceMode                        CtrlID = CidCodecBase + 221
+	CidMPEGVideoVBVSize                               CtrlID = CidCodecBase + 222
+	CidMPEGVideoDecPTS                                CtrlID = CidCodecBase + 223
+	CidMPEGVideoDecFrame                              CtrlID = CidCodecBase + 224
+	CidMPEGVideoVBVDelay                              CtrlID = CidCodecBase + 225
+	CidMPEGVideoREPEAT_SEQ_HEADER                     CtrlID = CidCodecBase + 226
+	CidMPEGVideoMV_HSearchRange                       CtrlID = CidCodecBase + 227
+	CidMPEGVideoMV_VSearchRange                       CtrlID = CidCodecBase + 228
+	CidMPEGVideoForceKeyFrame                         CtrlID = CidCodecBase + 229
+	CidMPEGVideoBaselayerPriorityID                   CtrlID = CidCodecBase + 230
+	CidMPEGVideoAUDelimiter                           CtrlID = CidCodecBase + 231
+	CidMPEGVideoLTRCount                              CtrlID = CidCodecBase + 232
+	CidMPEGVideoFrameLTRIndex                         CtrlID = CidCodecBase + 233
+	CidMPEGVideoUseLTRFrameS                          CtrlID = CidCodecBase + 234
+	CidMPEGVideoDecConcealColor                       CtrlID = CidCodecBase + 235
+	CidMPEGVideoIntraRefreshPeriod                    CtrlID = CidCodecBase + 236
+	CidMPEGVideoMPEG2Level                            CtrlID = CidCodecBase + 270
+	CidMPEGVideoMPEG2Profile                          CtrlID = CidCodecBase + 271
+	CidFwhtIFrameQP                                   CtrlID = CidCodecBase + 290
+	CidFwhtPFrameQP                                   CtrlID = CidCodecBase + 291
+	CidMPEGVideoH263IFrameQP                          CtrlID = CidCodecBase + 300
+	CidMPEGVideoH263PFrameQP                          CtrlID = CidCodecBase + 301
+	CidMPEGVideoH263BFrameQP                          CtrlID = CidCodecBase + 302
+	CidMPEGVideoH263MinQP                             CtrlID = CidCodecBase + 303
+	CidMPEGVideoH263MaxQP                             CtrlID = CidCodecBase + 304
+	CidMPEGVideoH264IFrameQP                          CtrlID = CidCodecBase + 350
+	CidMPEGVideoH264PFrameQP                          CtrlID = CidCodecBase + 351
+	CidMPEGVideoH264BFrameQP                          CtrlID = CidCodecBase + 352
+	CidMPEGVideoH264MinQP                             CtrlID = CidCodecBase + 353
+	CidMPEGVideoH264MaxQP                             CtrlID = CidCodecBase + 354
+	CidMPEGVideoH2648X8Transform                      CtrlID = CidCodecBase + 355
+	CidMPEGVideoH264CPBSize                           CtrlID = CidCodecBase + 356
+	CidMPEGVideoH264EntropyMode                       CtrlID = CidCodecBase + 357
+	CidMPEGVideoH264IPeriod                           CtrlID = CidCodecBase + 358
+	CidMPEGVideoH264Level                             CtrlID = CidCodecBase + 359
+	CidMPEGVideoH264LoopFilterAlpha                   CtrlID = CidCodecBase + 360
+	CdMPEGVideoH264LoopFilterBeta                     CtrlID = CidCodecBase + 361
+	CdMPEGVideoH264LoopFilterMode                     CtrlID = CidCodecBase + 362
+	CidMPEGVideoH264Profile                           CtrlID = CidCodecBase + 363
+	CidMPEGVideoH264VUI_EXT_SAR_HEIGHT                CtrlID = CidCodecBase + 364
+	CidMPEGVideoH264VUI_EXT_SAR_WIDTH                 CtrlID = CidCodecBase + 365
+	CidMPEGVideoH264VUI_SAR_ENABLE                    CtrlID = CidCodecBase + 366
+	CidMPEGVideoH264VUI_SAR_IDC                       CtrlID = CidCodecBase + 367
+	CidMPEGVideoH264SEIFramePACKING                   CtrlID = CidCodecBase + 368
+	CidMPEGVideoH264SEI_FPCurrentFrame0               CtrlID = CidCodecBase + 369
+	CidMPEGVideoH264SEI_FPArrangementType             CtrlID = CidCodecBase + 370
+	CidMPEGVideoH264FMO                               CtrlID = CidCodecBase + 371
+	CidMPEGVideoH264FMO_MapType                       CtrlID = CidCodecBase + 372
+	CidMPEGVideoH264FMO_SliceGroup                    CtrlID = CidCodecBase + 373
+	CidMPEGVideoH264FMOChangeDirection                CtrlID = CidCodecBase + 374
+	CidMPEGVideoH264FMOChangeRate                     CtrlID = CidCodecBase + 375
+	CidMPEGVideoH264FMORunLength                      CtrlID = CidCodecBase + 376
+	CidMPEGVideoH264ASO                               CtrlID = CidCodecBase + 377
+	CidMPEGVideoH264ASOSliceOrder                     CtrlID = CidCodecBase + 378
+	CidMPEGVideoH264HierarchicalCoding                CtrlID = CidCodecBase + 379
+	CidMPEGVideoH264HierarchicalCodingType            CtrlID = CidCodecBase + 380
+	CidMPEGVideoH264HierarchicalCodingLayer           CtrlID = CidCodecBase + 381
+	CidMPEGVideoH264HierarchicalCodingLaYERQP         CtrlID = CidCodecBase + 382
+	CidMPEGVideoH264ConstrainedIntraPrediction        CtrlID = CidCodecBase + 383
+	CidMPEGVideoH264ChromaQPIndexOffset               CtrlID = CidCodecBase + 384
+	CidMPEGVideoH264IFrameMinQP                       CtrlID = CidCodecBase + 385
+	CidMPEGVideoH264IFrameMaxQP                       CtrlID = CidCodecBase + 386
+	CidMPEGVideoH264PFrameMinQP                       CtrlID = CidCodecBase + 387
+	CidMPEGVideoH264PFrameMaxQP                       CtrlID = CidCodecBase + 388
+	CidMPEGVideoH264BFrameMinQP                       CtrlID = CidCodecBase + 389
+	CidMPEGVideoH264BFrameMaxQP                       CtrlID = CidCodecBase + 390
+	CidMPEGVideoH264HierCodingL0BR                    CtrlID = CidCodecBase + 391
+	CidMPEGVideoH264HierCodingL1BR                    CtrlID = CidCodecBase + 392
+	CidMPEGVideoH264HierCodingL2BR                    CtrlID = CidCodecBase + 393
+	CidMPEGVideoH264HierCodingL3BR                    CtrlID = CidCodecBase + 394
+	CidMPEGVideoH264HierCodingL4BR                    CtrlID = CidCodecBase + 395
+	CidMPEGVideoH264HierCodingL5BR                    CtrlID = CidCodecBase + 396
+	CidMPEGVideoH264HierCodingL6BR                    CtrlID = CidCodecBase + 397
+	CidMPEGVideoMPEG4IFrameQP                         CtrlID = CidCodecBase + 400
+	CidMPEGVideoMPEG4PFrameQP                         CtrlID = CidCodecBase + 401
+	CidMPEGVideoMPEG4BFrameQP                         CtrlID = CidCodecBase + 402
+	CidMPEGVideoMPEG4MinQP                            CtrlID = CidCodecBase + 403
+	CidMPEGVideoMPEG4MaxQP                            CtrlID = CidCodecBase + 404
+	CidMPEGVideoMPEG4Level                            CtrlID = CidCodecBase + 405
+	CidMPEGVideoMPEG4Profile                          CtrlID = CidCodecBase + 406
+	CidMPEGVideoMPEG4QPEL                             CtrlID = CidCodecBase + 407
+	CidMPEGVideoVPXNumPartitions                      CtrlID = CidCodecBase + 500
+	CidMPEGVideoVPX_IMD_DISABLE_4X4                   CtrlID = CidCodecBase + 501
+	CidMPEGVideoVPXNum_REFFrameS                      CtrlID = CidCodecBase + 502
+	CidMPEGVideoVPXFilterLevel                        CtrlID = CidCodecBase + 503
+	CidMPEGVideoVPXFilterSharpness                    CtrlID = CidCodecBase + 504
+	CidMPEGVideoVPXGoldenFrameRefPeriod               CtrlID = CidCodecBase + 505
+	CidMPEGVideoVPXGoldenFrameSel                     CtrlID = CidCodecBase + 506
+	CidMPEGVideoVPXMinQP                              CtrlID = CidCodecBase + 507
+	CidMPEGVideoVPMaxQP                               CtrlID = CidCodecBase + 508
+	CidMPEGVideoVPIFrameQP                            CtrlID = CidCodecBase + 509
+	CidMPEGVideoVPXPFrameQP                           CtrlID = CidCodecBase + 510
+	CidMPEGVideoVP8Profile                            CtrlID = CidCodecBase + 511
+	CidMPEGVideoVPXProfile                            CtrlID = CidMPEGVideoVP8Profile
+	CidMPEGVideoVP9Profile                            CtrlID = CidCodecBase + 512
+	CidMPEGVideoVP9Level                              CtrlID = CidCodecBase + 513
+	CidMPEGVideoHEVC_MinQP                            CtrlID = CidCodecBase + 600
+	CidMPEGVideoHEVC_MaxQP                            CtrlID = CidCodecBase + 601
+	CidMPEGVideoHEVC_IFrameQP                         CtrlID = CidCodecBase + 602
+	CidMPEGVideoHEVC_PFrameQP                         CtrlID = CidCodecBase + 603
+	CidMPEGVideoHEVC_BFrameQP                         CtrlID = CidCodecBase + 604
+	CidMPEGVideoHEVC_HierQP                           CtrlID = CidCodecBase + 605
+	CidMPEGVideoHEVC_HierCodingTYPE                   CtrlID = CidCodecBase + 606
+	CidMPEGVideoHEVC_HierCodingLAYER                  CtrlID = CidCodecBase + 607
+	CidMPEGVideoHEVC_HierCodingL0_QP                  CtrlID = CidCodecBase + 608
+	CidMPEGVideoHEVC_HierCodingL1_QP                  CtrlID = CidCodecBase + 609
+	CidMPEGVideoHEVC_HierCodingL2_QP                  CtrlID = CidCodecBase + 610
+	CidMPEGVideoHEVC_HierCodingL3_QP                  CtrlID = CidCodecBase + 611
+	CidMPEGVideoHEVC_HierCodingL4_QP                  CtrlID = CidCodecBase + 612
+	CidMPEGVideoHEVC_HierCodingL5_QP                  CtrlID = CidCodecBase + 613
+	CidMPEGVideoHEVC_HierCodingL6_QP                  CtrlID = CidCodecBase + 614
+	CidMPEGVideoHEVCProfile                           CtrlID = CidCodecBase + 615
+	CidMPEGVideoHEVCLevel                             CtrlID = CidCodecBase + 616
+	CidMPEGVideoHEVCFrameRATE_RESOLUTION              CtrlID = CidCodecBase + 617
+	CidMPEGVideoHEVC_TIER                             CtrlID = CidCodecBase + 618
+	CidMPEGVideoHEVC_MaxPARTITION_DEPTH               CtrlID = CidCodecBase + 619
+	CidMPEGVideoHEVC_LoopFILTERMode                   CtrlID = CidCodecBase + 620
+	CidMPEGVideoHEVC_LF_BETAOffset_DIV2               CtrlID = CidCodecBase + 621
+	CidMPEGVideoHEVC_LF_TCOffset_DIV2                 CtrlID = CidCodecBase + 622
+	CidMPEGVideoHEVC_RefreshTYPE                      CtrlID = CidCodecBase + 623
+	CidMPEGVideoHEVC_RefreshPeriod                    CtrlID = CidCodecBase + 624
+	CidMPEGVideoHEVC_LOSSLESS_CU                      CtrlID = CidCodecBase + 625
+	CidMPEGVideoHEVC_CONST_IntraPRED                  CtrlID = CidCodecBase + 626
+	CidMPEGVdeoHEVC_WAVEFRONT                         CtrlID = CidCodecBase + 627
+	CidMPEGVdeoHEVC_GENERAL_PB                        CtrlID = CidCodecBase + 628
+	CidMPEGVideoHEVC_TEMPORAL_ID                      CtrlID = CidCodecBase + 629
+	CidMPEGVideoHEVC_STRONG_SMOOTHING                 CtrlID = CidCodecBase + 630
+	CidMPEGVideoHEVC_MaxNUM_MERGE_MV_MINUS1           CtrlID = CidCodecBase + 631
+	CidMPEGVideoHEVC_IntraPU_SPLIT                    CtrlID = CidCodecBase + 632
+	CidMPEGVideoHEVC_TMV_PREDICTION                   CtrlID = CidCodecBase + 633
+	CidMPEGVideoHEVC_WITHOUT_STARTCODE                CtrlID = CidCodecBase + 634
+	CidMPEGVideoHEVCSize_OFLength_FIELD               CtrlID = CidCodecBase + 635
+	CidMPEGVideoHEVC_HierCodingL0_BR                  CtrlID = CidCodecBase + 636
+	CidMPEGVideoHEVC_HierCodingL1_BR                  CtrlID = CidCodecBase + 637
+	CidMPEGVideoHEVC_HierCodingL2_BR                  CtrlID = CidCodecBase + 638
+	CidMPEGVideoHEVC_HierCodingL3_BR                  CtrlID = CidCodecBase + 639
+	CidMPEGVideoHEVC_HierCodingL4_BR                  CtrlID = CidCodecBase + 640
+	CidMPEGVideoHEVC_HierCodingL5_BR                  CtrlID = CidCodecBase + 641
+	CidMPEGVideoHEVC_HierCodingL6_BR                  CtrlID = CidCodecBase + 642
+	CidMPEGVideoREFNumBER_FOR_PFRAMES                 CtrlID = CidCodecBase + 643
+	CidMPEGVideoPREPEND_SPSPPS_TO_IDR                 CtrlID = CidCodecBase + 644
+	CidMPEGVideoCONSTANT_QUALITY                      CtrlID = CidCodecBase + 645
+	CidMPEGVideoFrameSKIPMode                         CtrlID = CidCodecBase + 646
+	CidMPEGVideoHEVC_IFrameMinQP                      CtrlID = CidCodecBase + 647
+	CidMPEGVideoHEVC_IFrameMaxQP                      CtrlID = CidCodecBase + 648
+	CidMPEGVideoHEVC_PFrameMinQP                      CtrlID = CidCodecBase + 649
+	CidMPEGVideoHEVC_PFrameMaxQP                      CtrlID = CidCodecBase + 650
+	CidMPEGVideoHEVC_BFrameMinQP                      CtrlID = CidCodecBase + 651
+	CidMPEGVideoHEVC_BFrameMaxQP                      CtrlID = CidCodecBase + 652
+	CidMPEGVideoDEC_DISPLAY_DELAY                     CtrlID = CidCodecBase + 653
+	CidMPEGVideoDEC_DISPLAY_DELAY_ENABLE              CtrlID = CidCodecBase + 654
+	CidCodecCX2341X_BASE                              CtrlID = CtrlID(CtrlClassCodec | 0x1000)
+	CidMPEGCX2341XVideoSPATIALFilterMode              CtrlID = CidCodecCX2341X_BASE + 0
+	CidMPEGCX2341XVideoSPATIALFilter                  CtrlID = CidCodecCX2341X_BASE + 1
+	CidMPEGCX2341XVideoLUMA_SPATIALFilterTYPE         CtrlID = CidCodecCX2341X_BASE + 2
+	CidMPEGCX2341XVideoChromaSPATIALFilterTYPE        CtrlID = CidCodecCX2341X_BASE + 3
+	CidMPEGCX2341XVideoTEMPORALFilterMode             CtrlID = CidCodecCX2341X_BASE + 4
+	CidMPEGCX2341XVideoTEMPORALFilter                 CtrlID = CidCodecCX2341X_BASE + 5
+	CidMPEGCX2341XVideoMEDIANFilterTYPE               CtrlID = CidCodecCX2341X_BASE + 6
+	CidMPEGCX2341XVideoLUMA_MEDIANFilterBOTTOM        CtrlID = CidCodecCX2341X_BASE + 7
+	CidMPEGCX2341XVideoLUMA_MEDIANFilterTOP           CtrlID = CidCodecCX2341X_BASE + 8
+	CidMPEGCX2341XVideoChromaMEDIANFilterBOTTOM       CtrlID = CidCodecCX2341X_BASE + 9
+	CidMPEGCX2341XVideoChromaMEDIANFilterTOP          CtrlID = CidCodecCX2341X_BASE + 10
+	CidMPEGCX2341X_STREAM_INSERT_NAV_PACKETS          CtrlID = CidCodecCX2341X_BASE + 11
+	CidCodecMFC51_BASE                                CtrlID = CtrlID(CtrlClassCodec | 0x1100)
+	CidMPEGMFC51VideoDecoderH264_DISPLAY_DELAY        CtrlID = CidCodecMFC51_BASE + 0
+	CidMPEGMFC51VideoDecoderH264_DISPLAY_DELAY_ENABLE CtrlID = CidCodecMFC51_BASE + 1
+	CidMPEGMFC51VideoFrameSKIPMode                    CtrlID = CidCodecMFC51_BASE + 2
+	CidMPEGMFC51VideoForceFrameTYPE                   CtrlID = CidCodecMFC51_BASE + 3
+	CidMPEGMFC51VideoPADDING                          CtrlID = CidCodecMFC51_BASE + 4
+	CidMPEGMFC51VideoPADDING_YUV                      CtrlID = CidCodecMFC51_BASE + 5
+	CidMPEGMFC51VideoRC_FIXED_TARGET_BIT              CtrlID = CidCodecMFC51_BASE + 6
+	CidMPEGMFC51VideoRC_REACTION_COEFF                CtrlID = CidCodecMFC51_BASE + 7
+	CidMPEGMFC51VideoH264ADAPTIVE_RC_ACTIVITY         CtrlID = CidCodecMFC51_BASE + 50
+	CidMPEGMFC51VideoH264ADAPTIVE_RC_DARK             CtrlID = CidCodecMFC51_BASE + 51
+	CidMPEGMFC51VideoH264ADAPTIVE_RC_SMOOTH           CtrlID = CidCodecMFC51_BASE + 52
+	CidMPEGMFC51VideoH264ADAPTIVE_RC_STATIC           CtrlID = CidCodecMFC51_BASE + 53
+	CidMPEGMFC51VideoH264NUM_REF_PIC_FOR_P            CtrlID = CidCodecMFC51_BASE + 54
+)
+
+// The video ioctl values.
+const (
+	VidIocQueryCap           uint32 = 0x80685600
+	VidIocReserved           uint32 = 0x00005601
+	VidIocEnumFmt            uint32 = 0xc0405602
+	VidIocGFmt               uint32 = 0xc0d05604
+	VidIocSFmt               uint32 = 0xc0d05605
+	VidIocReqBufs            uint32 = 0xc0145608
+	VidIocQueryBuf           uint32 = 0xc0585609
+	VidIocGFBuf              uint32 = 0x8030560a
+	VidIocSFBuf              uint32 = 0x4030560b
+	VidIocOverlay            uint32 = 0x4004560e
+	VidIocQBuf               uint32 = 0xc058560f
+	VidIocExpBuf             uint32 = 0xc0405610
+	VidIocDQBuf              uint32 = 0xc0585611
+	VidIocStreamOn           uint32 = 0x40045612
+	VidIocStreamOff          uint32 = 0x40045613
+	VidIocGParm              uint32 = 0xc0cc5615
+	VidIocSParm              uint32 = 0xc0cc5616
+	VidIocGStd               uint32 = 0x80085617
+	VidIocSStd               uint32 = 0x40085618
+	VidIocEnumStd            uint32 = 0xc0485619
+	VidIocEnumInput          uint32 = 0xc050561a
+	VidIocGCtrl              uint32 = 0xc008561b
+	VidIocSCtrl              uint32 = 0xc008561c
+	VidIocGTuner             uint32 = 0xc054561d
+	VidIocSTuner             uint32 = 0x4054561e
+	VidIocGAudio             uint32 = 0x80345621
+	VidIocSAudio             uint32 = 0x40345622
+	VidIocQueryCtrl          uint32 = 0xc0445624
+	VidIocQueryMenu          uint32 = 0xc02c5625
+	VidIocGInput             uint32 = 0x80045626
+	VidIocSInput             uint32 = 0xc0045627
+	VidIocGEDID              uint32 = 0xc0285628
+	VidIocSEDID              uint32 = 0xc0285629
+	VidIocGOutput            uint32 = 0x8004562e
+	VidIocSOutput            uint32 = 0xc004562f
+	VidIocEnumOutput         uint32 = 0xc0485630
+	VidIocGAudOut            uint32 = 0x80345631
+	VidIocSAudOut            uint32 = 0x40345632
+	VidIocGModulator         uint32 = 0xc0445636
+	VidIocSModulator         uint32 = 0x40445637
+	VidIocGFrequency         uint32 = 0xc02c5638
+	VidIocSFrequency         uint32 = 0x402c5639
+	VidIocCropCap            uint32 = 0xc02c563a
+	VidIocGCrop              uint32 = 0xc014563b
+	VidIocSCrop              uint32 = 0x4014563c
+	VidIocGJpegComp          uint32 = 0x808c563d
+	VidIocSJpegComp          uint32 = 0x408c563e
+	VidIocQueryStd           uint32 = 0x8008563f
+	VidIocTryFmt             uint32 = 0xc0d05640
+	VidIocEnumAudio          uint32 = 0xc0345641
+	VidIocEnumAudOut         uint32 = 0xc0345642
+	VidIocGPriority          uint32 = 0x80045643
+	VidIocSPriority          uint32 = 0x40045644
+	VidIocGSlicedVBICap      uint32 = 0xc0745645
+	VidIocLogStatus          uint32 = 0x00005646
+	VidIocGExtCtrls          uint32 = 0xc0205647
+	VidIocSExtCtrls          uint32 = 0xc0205648
+	VidIocTryExtCtrls        uint32 = 0xc0205649
+	VidIocEnumFrameSizes     uint32 = 0xc02c564a
+	VidIocEnumFrameIntervals uint32 = 0xc034564b
+	VidIocGEncIndex          uint32 = 0x8818564c
+	VidIocEncoderCmd         uint32 = 0xc028564d
+	VidIocTryEncoderCmd      uint32 = 0xc028564e
 )
 
 // StdID is the standard ID type.
@@ -690,7 +992,7 @@ const (
 	XferFuncSMPTE2084
 )
 
-// Audio is v4l2_audio.
+// Audio is the v4l2 audio struct.
 type Audio struct {
 	Index      uint32
 	Name       [32]byte
@@ -699,7 +1001,7 @@ type Audio struct {
 	Reserved   [2]uint32
 }
 
-// Buffer is v4l2_buffer.
+// Buffer is the v4l2 buffer struct.
 type Buffer struct {
 	Index     uint32
 	Type      BufType
@@ -716,7 +1018,7 @@ type Buffer struct {
 	RequestFD uint32
 }
 
-// Capability is v4l2_capability.
+// Capability is the v4l2 capability struct.
 type Capability struct {
 	Driver       [16]byte
 	Card         [32]byte
@@ -727,13 +1029,19 @@ type Capability struct {
 	Reserved     [3]uint32
 }
 
-// Clip is v4l2_clip.
+// Clip is the v4l2 clip struct.
 type Clip struct {
 	C    Rect
 	Next uintptr
 }
 
-// CtrlFwhtparams is v4l2_TODO.
+// Control is the v4l2 control.
+type Control struct {
+	ID    CtrlID
+	Value int32
+}
+
+// CtrlFwhtparams is the v4l2 TODO.
 type CtrlFwhtparams struct {
 	BackwardRefTS uint64
 	Version       uint32
@@ -746,7 +1054,7 @@ type CtrlFwhtparams struct {
 	Quantization  uint32
 }
 
-// CtrlH264DecodeParams is v4l2_TODO.
+// CtrlH264DecodeParams is the v4l2 TODO.
 type CtrlH264DecodeParams struct {
 	DPD                 [16]H264DPDEntry
 	NumSlices           uint16
@@ -756,7 +1064,7 @@ type CtrlH264DecodeParams struct {
 	Flags               uint32
 }
 
-// CtrlHevcPps is v4l2_TODO.
+// CtrlHevcPps is the v4l2 TODO.
 type CtrlHevcPps struct {
 	NumExtraSliceHeaderBits      uint8
 	InitQpMinus26                int8
@@ -774,7 +1082,7 @@ type CtrlHevcPps struct {
 	Flags                        uint64
 }
 
-// CtrlHevcSps is v4l2_TODO.
+// CtrlHevcSps is the v4l2 TODO.
 type CtrlHevcSps struct {
 	PicWidthInLumaSamples                uint16
 	PicHeightInLumaSamples               uint16
@@ -800,7 +1108,7 @@ type CtrlHevcSps struct {
 	Flags                                uint64
 }
 
-// CtrlMpeg2Quantization is v4l2_TODO.
+// CtrlMpeg2Quantization is the v4l2 TODO.
 type CtrlMpeg2Quantization struct {
 	LoadIntraQuantiserMatrix          uint8
 	LoadNonIntraQuantiserMatrix       uint8
@@ -812,7 +1120,7 @@ type CtrlMpeg2Quantization struct {
 	ChromaNonIntraQuantiserMatrix     [64]uint8
 }
 
-// CtrlMpeg2SliceParams is v4l2_TODO.
+// CtrlMpeg2SliceParams is the v4l2 TODO.
 type CtrlMpeg2SliceParams struct {
 	BitSize            uint32
 	DataBitOffset      uint32
@@ -822,7 +1130,7 @@ type CtrlMpeg2SliceParams struct {
 	QuantiserScaleCode uint32
 }
 
-// CtrlVP8FrameHeader is v4l2_TODO.
+// CtrlVP8FrameHeader is the v4l2 TODO.
 type CtrlVP8FrameHeader struct {
 	SegmentHeader         VP8SegmentHeader
 	LoopfilterHeader      VP8LoopfilterHeader
@@ -848,7 +1156,7 @@ type CtrlVP8FrameHeader struct {
 	Flags                 uint64
 }
 
-// FmtDesc is v4l2_fmtdesc.
+// FmtDesc is the v4l2 fmtdesc.
 type FmtDesc struct {
 	Index       uint32
 	Type        BufType
@@ -858,20 +1166,20 @@ type FmtDesc struct {
 	Reserved    [4]uint32
 }
 
-// Format is v4l2_format.
+// Format is the v4l2 format.
 type Format struct {
 	Type    BufType
 	_       uint32
 	RawData [200]byte // Union of several possible types.
 }
 
-// FrameSizeDiscrete is v4l2_framesize_discrete.
+// FrameSizeDiscrete is v4l2Framesize_discrete.
 type FrameSizeDiscrete struct {
 	Width  uint32
 	Height uint32
 }
 
-// FrameSizeEnum is v4l2_framesizeenum.
+// FrameSizeEnum is v4l2Framesizeenum.
 type FrameSizeEnum struct {
 	Index     uint32
 	PixFormat PixFmt
@@ -880,7 +1188,7 @@ type FrameSizeEnum struct {
 	Reserved  [2]uint32
 }
 
-// FrameSizeStepwise is v4l2_framesize_stepwise.
+// FrameSizeStepwise is v4l2Framesize_stepwise.
 type FrameSizeStepwise struct {
 	MinWidth   uint32
 	MaxWidth   uint32
@@ -890,7 +1198,7 @@ type FrameSizeStepwise struct {
 	StepHeight uint32
 }
 
-// Frequency is v4l2_frequency.
+// Frequency is v4l2Frequency.
 type Frequency struct {
 	Tuner     uint32
 	Type      uint32
@@ -898,7 +1206,7 @@ type Frequency struct {
 	Reserved  [4]uint32
 }
 
-// H264DPDEntry is v4l2_TODO.
+// H264DPDEntry is the v4l2 TODO.
 type H264DPDEntry struct {
 	ReferenceTS         uint64
 	FrameNum            uint16
@@ -908,14 +1216,14 @@ type H264DPDEntry struct {
 	Flags               uint32
 }
 
-// H264PredWeightTable is v4l2_TODO.
+// H264PredWeightTable is the v4l2 TODO.
 type H264PredWeightTable struct {
 	LumaLog2WeightDenom   uint16
 	ChromaLog2WeightDenom uint16
 	Weightfactors         [2]H264WeightFactors
 }
 
-// H264WeightFactors is v4l2_TODO.
+// H264WeightFactors is the v4l2 TODO.
 type H264WeightFactors struct {
 	LumaWeight   [32]int16
 	LumaOffset   [32]int16
@@ -923,7 +1231,7 @@ type H264WeightFactors struct {
 	ChromaOffset [32]int16
 }
 
-// Input is v4l2_input.
+// Input is the v4l2 input.
 type Input struct {
 	Index        uint32
 	Name         [32]byte
@@ -936,7 +1244,7 @@ type Input struct {
 	Reserved     [3]uint32
 }
 
-// Modulator is v4l2_modulator.
+// Modulator is the v4l2 modulator.
 type Modulator struct {
 	Index      uint32
 	Name       [32]byte
@@ -948,7 +1256,7 @@ type Modulator struct {
 	Reserved   [3]uint32
 }
 
-// Mpeg2Picture is v4l2_TODO.
+// Mpeg2Picture is the v4l2 TODO.
 type Mpeg2Picture struct {
 	PictureCodingType        uint8
 	FCode                    [2][2]uint8
@@ -964,7 +1272,7 @@ type Mpeg2Picture struct {
 	ProgressiveFrame         uint16
 }
 
-// Mpeg2Sequence is v4l2_TODO.
+// Mpeg2Sequence is the v4l2 TODO.
 type Mpeg2Sequence struct {
 	HorizontalSize            uint16
 	VerticalSize              uint16
@@ -974,7 +1282,7 @@ type Mpeg2Sequence struct {
 	ChromaFormat              uint8
 }
 
-// Output is v4l2_output.
+// Output is the v4l2 output.
 type Output struct {
 	Index        uint32
 	Name         [32]byte
@@ -986,7 +1294,7 @@ type Output struct {
 	Reserved     [3]uint32
 }
 
-// PixFormat is v4l2_pix_format.
+// PixFormat is the v4l2 pix format.
 type PixFormat struct {
 	Width        uint32
 	Height       uint32
@@ -1002,7 +1310,7 @@ type PixFormat struct {
 	XferFunc     XferFunc
 }
 
-// PixFormatMPlane is v4l2_pix_format_mplane.
+// PixFormatMPlane is the v4l2 pix format_mplane.
 type PixFormatMPlane struct {
 	Width        uint32
 	Height       uint32
@@ -1018,7 +1326,7 @@ type PixFormatMPlane struct {
 	Reserved     [7]uint8
 }
 
-// Plane is v4l2_plane.
+// Plane is the v4l2 plane.
 type Plane struct {
 	BytesUsed  uint32
 	Length     uint32
@@ -1027,27 +1335,27 @@ type Plane struct {
 	Reserved   [11]uint32
 }
 
-// PlanePixFormat is v4l2_plane_pix_format.
+// PlanePixFormat is the v4l2 plane pix format.
 type PlanePixFormat struct {
 	SizeImage    uint32
 	BytesPerLine uint32
 	Reserved     [6]uint16
 }
 
-// QueryCtrl is an encapsulation of a control.
+// QueryCtrl is the v4l2 query control struct.
 type QueryCtrl struct {
-	ID           uint32
-	Type         uint32
+	ID           CtrlID
+	Type         CtrlType
 	Name         [32]byte
 	Minimum      int32
 	Maximum      int32
 	Step         int32
 	DefaultValue int32
 	Flags        uint32
-	Rserved      [2]uint32
+	Reserved     [2]uint32
 }
 
-// QueryExtCtrl is an encapsulation of an extended control.
+// QueryExtCtrl is the v4l2 query extended control struct.
 type QueryExtCtrl struct {
 	ID           uint32
 	Type         uint32
@@ -1061,19 +1369,19 @@ type QueryExtCtrl struct {
 	Elems        uint32
 	NrOfDims     uint32
 	Dims         [4]uint32
-	Rserved      [32]uint32
+	Reserved     [32]uint32
 }
 
 // QueryMenu is an encapsulation of a menu.
 type QueryMenu struct {
-	ID    uint32
+	ID    CtrlID
 	Index uint32
 	Name  [32]byte
 	// Value int64 unioned with Name
 	Reserved uint32
 }
 
-// Rect is v4l2_rect.
+// Rect is the v4l2 rect.
 type Rect struct {
 	Left   int32
 	Top    int32
@@ -1081,7 +1389,7 @@ type Rect struct {
 	Height uint32
 }
 
-// RequestBuffers is v4l2_requestbuffers.
+// RequestBuffers is the v4l2 requestbuffers.
 type RequestBuffers struct {
 	Count        uint32
 	Type         BufType
@@ -1090,7 +1398,7 @@ type RequestBuffers struct {
 	Reserved     [1]uint32
 }
 
-// SlicedVBIFormat is v4l2_sliced_vbi_format.
+// SlicedVBIFormat is the v4l2 sliced_vbi_format.
 type SlicedVBIFormat struct {
 	ServiceSet   uint32
 	ServiceLines [2][24]SlicedVBIService
@@ -1098,7 +1406,7 @@ type SlicedVBIFormat struct {
 	Reserved     [2]uint32
 }
 
-// Timecode is v4l2_timecode.
+// Timecode is the v4l2 timecode.
 type Timecode struct {
 	Type     TcType
 	Flags    TcFlag
@@ -1109,7 +1417,7 @@ type Timecode struct {
 	UserBits [4]uint8
 }
 
-// Tuner is v4l2_tuner.
+// Tuner is the v4l2 tuner.
 type Tuner struct {
 	Index      uint32
 	Name       [32]byte
@@ -1124,7 +1432,7 @@ type Tuner struct {
 	Reserved   [4]uint32
 }
 
-// VBIFormat is v4l2_vbi_format.
+// VBIFormat is the v4l2 vbi_format.
 type VBIFormat struct {
 	SamplingRate   uint32
 	Offset         uint32
@@ -1135,7 +1443,7 @@ type VBIFormat struct {
 	Reserved       uint32
 }
 
-// VP8EntropyCoderState is v4l2_TODO.
+// VP8EntropyCoderState is the v4l2 TODO.
 type VP8EntropyCoderState struct {
 	Range    uint8
 	Value    uint8
@@ -1143,7 +1451,7 @@ type VP8EntropyCoderState struct {
 	Padding  uint8
 }
 
-// VP8EntropyHeader is v4l2_TODO.
+// VP8EntropyHeader is the v4l2 TODO.
 type VP8EntropyHeader struct {
 	CoeffProbs  [4][8][3][11]uint8
 	YModeProbs  [4]uint8
@@ -1152,7 +1460,7 @@ type VP8EntropyHeader struct {
 	Padding     [3]uint8
 }
 
-// VP8LoopfilterHeader is v4l2_TODO.
+// VP8LoopfilterHeader is the v4l2 TODO.
 type VP8LoopfilterHeader struct {
 	RefFrmDelta    [4]int8
 	MBModeDelta    [4]int8
@@ -1161,7 +1469,7 @@ type VP8LoopfilterHeader struct {
 	Flags          uint32
 }
 
-// VP8QuantizationHeader is v4l2_TODO.
+// VP8QuantizationHeader is the v4l2 TODO.
 type VP8QuantizationHeader struct {
 	YACQi     uint8
 	YDCDelta  int8
@@ -1172,7 +1480,7 @@ type VP8QuantizationHeader struct {
 	Padding   uint16
 }
 
-// VP8SegmentHeader is v4l2_TODO.
+// VP8SegmentHeader is the v4l2 TODO.
 type VP8SegmentHeader struct {
 	QuantUpdate  [4]int8
 	LFUpdate     [4]int8
@@ -1181,7 +1489,7 @@ type VP8SegmentHeader struct {
 	Flags        uint32
 }
 
-// Window is v4l2_window.
+// Window is the v4l2 window.
 type Window struct {
 	W           Rect
 	Field       Field
@@ -1243,6 +1551,47 @@ func EnumFrameSizes(fd int, pixFormat PixFmt) ([]*FrameSizeEnum, error) {
 	return frameSizeEnums, nil
 }
 
+// QueryControls queries the controls.
+func QueryControls(fd int) ([]*QueryCtrl, error) {
+	controls := make([]*QueryCtrl, 0, 4)
+	id := CtrlID(CtrlFlagNextCtrl)
+	for {
+		queryCtrl := &QueryCtrl{}
+		queryCtrl.ID = id
+		_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocQueryCtrl), uintptr(unsafe.Pointer(queryCtrl)))
+		if err != 0 {
+			if err == syscall.EINVAL {
+				break
+			}
+			return nil, err
+		}
+		controls = append(controls, queryCtrl)
+		id = queryCtrl.ID | CtrlID(CtrlFlagNextCtrl)
+	}
+	return controls, nil
+}
+
+// QueryMenus queries all menus for a particular control ID.
+func QueryMenus(fd int, id CtrlID) ([]*QueryMenu, error) {
+	var index uint32 = 0
+	menus := make([]*QueryMenu, 0, 4)
+	for {
+		queryMenu := &QueryMenu{}
+		queryMenu.ID = id
+		queryMenu.Index = index
+		_, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocQueryMenu), uintptr(unsafe.Pointer(queryMenu)))
+		if err != 0 {
+			if err == syscall.EINVAL {
+				break
+			}
+			return nil, err
+		}
+		menus = append(menus, queryMenu)
+		index++
+	}
+	return menus, nil
+}
+
 // GetFormat returns the current format.
 func GetFormat(fd int, bufType BufType) (*Format, error) {
 	format := &Format{}
@@ -1266,6 +1615,22 @@ func SetFormat(fd int, bufType BufType, pixFormat PixFmt, width uint32, height u
 		return 0, 0, err
 	}
 	return pix.Width, pix.Height, nil
+}
+
+func GetControl(fd int, id CtrlID) (*Control, error) {
+	control := &Control{}
+	control.ID = id
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocGCtrl), uintptr(unsafe.Pointer(control))); err != 0 {
+		return nil, err
+	}
+	return control, nil
+}
+
+func SetControl(fd int, control *Control) error {
+	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocSCtrl), uintptr(unsafe.Pointer(control))); err != 0 {
+		return err
+	}
+	return nil
 }
 
 // RequestDriverBuffers requests driver buffers.
@@ -1311,7 +1676,7 @@ func DequeueBuffer(fd int, bufType BufType, memory Memory) (*Buffer, error) {
 	return buffer, nil
 }
 
-// StreamOn turns on streaming for the specified buffer type.
+// StreamOn turns on Streaming for the specified buffer type.
 func StreamOn(fd int, bufType BufType) error {
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocStreamOn), uintptr(unsafe.Pointer(&bufType))); err != 0 {
 		return err
@@ -1319,7 +1684,7 @@ func StreamOn(fd int, bufType BufType) error {
 	return nil
 }
 
-// StreamOff turns off streaming for the specified buffer type.
+// StreamOff turns off Streaming for the specified buffer type.
 func StreamOff(fd int, bufType BufType) error {
 	if _, _, err := syscall.Syscall(syscall.SYS_IOCTL, uintptr(fd), uintptr(VidIocStreamOff), uintptr(unsafe.Pointer(&bufType))); err != 0 {
 		return err
@@ -1388,11 +1753,9 @@ func MunmapBuffers(buffers [][]byte) error {
 
 // BytesToString converts a low-level, null-terminated C-string to a string.
 func BytesToString(b []byte) string {
-	var n int
-	for n = 0; n < len(b); n++ {
-		if b[n] == 0 {
-			break
-		}
+	if n := bytes.IndexByte(b, 0); n <= 0 {
+		return ""
+	} else {
+		return string(b[:n])
 	}
-	return string(b[:n])
 }

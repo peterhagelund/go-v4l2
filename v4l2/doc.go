@@ -18,7 +18,5 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/*
-Package v4l2 provides a pure Go interface for V4L2.
-*/
+// Package v4l2 provides a pure Go interface for V4L2.
 package v4l2
